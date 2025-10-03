@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { ArrowRight, Leaf, Star } from 'lucide-react';
 import { Button } from '../ui/Button';
 
@@ -57,13 +58,17 @@ export function Hero() {
             
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <Button size="lg" className="group bg-[#F3C64B] text-[#5C3A21] hover:bg-[#F3C64B]/90">
-                Ver Catálogo
-                <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-              </Button>
-              <Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-[#0B8A5F]">
-                Pedir Ahora
-              </Button>
+              <Link to="/catalogo">
+                <Button size="lg" className="group bg-[#F3C64B] text-[#5C3A21] hover:bg-[#F3C64B]/90">
+                  Ver Catálogo
+                  <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </Link>
+              <a href="#productos">
+                <Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-[#0B8A5F]">
+                  Pedir Ahora
+                </Button>
+              </a>
             </div>
           </div>
           

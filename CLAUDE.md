@@ -66,6 +66,7 @@ Los productos tienen `basePrice` y `price`, donde el precio final se calcula sum
 ### Estructura de Rutas
 
 - `/` - HomePage (landing page con productos destacados)
+- `/catalogo` - CatalogPage (catálogo completo con buscador y filtros)
 - `/producto/:slug` - ProductDetailPage (detalle de producto individual)
 - `/admin/*` - Panel administrativo (requiere autenticación)
   - `/admin/orders` - Gestión de pedidos
