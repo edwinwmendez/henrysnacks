@@ -104,3 +104,16 @@ Actualmente la app funciona con datos mock, pero está preparada para migrar a S
 - El sistema de opciones de productos es flexible: cada producto puede tener múltiples opciones (tamaño, proteína, toppings) que modifican el precio base
 - Los productos tienen categorías: 'chifles-verde', 'chifles-maduro', 'yuca', 'camote', 'combo'
 - El carrito compara items por producto ID + opciones seleccionadas (JSON.stringify) para detectar duplicados
+
+### Navegación con Scroll
+- El Header usa `handleNavClick()` para manejar navegación con scroll a secciones
+- Si estás en `/` (home): hace scroll suave a la sección
+- Si estás en otra página: navega a home y luego hace scroll
+- Esto permite que los enlaces de navegación funcionen desde cualquier página
+
+### Estructura de Navegación en Header
+- **Inicio**: Lleva a `/` (página principal)
+- **Productos**: Scroll a `#productos` (Productos Destacados en home)
+- **Tienda**: Lleva a `/catalogo` (catálogo completo con filtros y buscador)
+- **Combos**: Scroll a `#combos` (Sección Combos en home)
+- **Nuestra Historia**: Scroll a `#historia` (Sección Cultural en home)

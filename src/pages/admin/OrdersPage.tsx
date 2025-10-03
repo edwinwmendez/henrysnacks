@@ -32,13 +32,17 @@ export function OrdersPage() {
   const loadOrders = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
-        .from('orders')
-        .select('*')
-        .order('createdAt', { ascending: false });
 
-      if (error) throw error;
-      setOrders(data || []);
+      // TODO: Cuando la base de datos esté lista, usar:
+      // const { data, error } = await supabase
+      //   .from('orders')
+      //   .select('*')
+      //   .order('created_at', { ascending: false });
+
+      // Por ahora, usar datos mock
+      const { mockOrders } = await import('../../data/mockData');
+      setOrders(mockOrders);
+
     } catch (error) {
       console.error('Error loading orders:', error);
     } finally {

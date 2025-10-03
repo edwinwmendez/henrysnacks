@@ -154,7 +154,7 @@ export const mockProducts: Product[] = [
     slug: 'combo-selva-completo',
     category: 'combo',
     description: 'La experiencia completa: chifles verdes, yuca frita, camote y pollo deshilachado. Perfecto para 2-3 personas.',
-    price: 45,
+    price: 25,
     basePrice: 45,
     images: [
       'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg',
@@ -231,6 +231,162 @@ export const mockOrders: Order[] = [
     paymentMethod: 'efectivo',
     createdAt: '2024-01-15T10:30:00Z',
     estimatedDelivery: '45-60 minutos'
+  },
+  {
+    id: 'ORD-002',
+    items: [
+      {
+        product: mockProducts[4],
+        quantity: 1,
+        selectedOptions: { protein: 'mixto' },
+        totalPrice: 53
+      },
+      {
+        product: mockProducts[1],
+        quantity: 2,
+        selectedOptions: { size: 'small' },
+        totalPrice: 28
+      }
+    ],
+    total: 86,
+    deliveryFee: 5,
+    status: 'en_camino',
+    customerInfo: {
+      name: 'Carlos Mendoza',
+      phone: '+51 998877665',
+      address: 'Jr. Manco Cápac 456',
+      district: 'Magdalena',
+      reference: 'Edificio azul, dpto 302'
+    },
+    paymentMethod: 'pago_movil',
+    createdAt: '2024-01-15T11:15:00Z',
+    estimatedDelivery: '15-20 minutos'
+  },
+  {
+    id: 'ORD-003',
+    items: [
+      {
+        product: mockProducts[2],
+        quantity: 1,
+        selectedOptions: { size: 'familiar', protein: 'cecina' },
+        totalPrice: 34
+      }
+    ],
+    total: 42,
+    deliveryFee: 8,
+    status: 'entregado',
+    customerInfo: {
+      name: 'Ana Rodríguez',
+      phone: '+51 987123456',
+      address: 'Av. Arequipa 1234',
+      district: 'Lince',
+      reference: 'Frente al parque'
+    },
+    paymentMethod: 'efectivo',
+    createdAt: '2024-01-15T09:00:00Z',
+    estimatedDelivery: 'Entregado'
+  },
+  {
+    id: 'ORD-004',
+    items: [
+      {
+        product: mockProducts[5],
+        quantity: 2,
+        selectedOptions: { size: 'grande' },
+        totalPrice: 76
+      }
+    ],
+    total: 85,
+    deliveryFee: 9,
+    status: 'entregado',
+    customerInfo: {
+      name: 'Luis Torres',
+      phone: '+51 976543210',
+      address: 'Calle Los Pinos 789',
+      district: 'Miraflores',
+      reference: 'Casa esquina, portón negro'
+    },
+    paymentMethod: 'pago_movil',
+    createdAt: '2024-01-15T08:30:00Z',
+    estimatedDelivery: 'Entregado'
+  },
+  {
+    id: 'ORD-005',
+    items: [
+      {
+        product: mockProducts[3],
+        quantity: 3,
+        selectedOptions: { size: 'medium', seasoning: 'spicy' },
+        totalPrice: 51
+      }
+    ],
+    total: 58,
+    deliveryFee: 7,
+    status: 'pending',
+    customerInfo: {
+      name: 'Patricia Vega',
+      phone: '+51 965432109',
+      address: 'Av. Brasil 2020',
+      district: 'Pueblo Libre',
+      reference: 'Al lado de la farmacia'
+    },
+    paymentMethod: 'efectivo',
+    createdAt: '2024-01-15T12:00:00Z',
+    estimatedDelivery: '50-65 minutos'
+  },
+  {
+    id: 'ORD-006',
+    items: [
+      {
+        product: mockProducts[0],
+        quantity: 1,
+        selectedOptions: { size: 'large', protein: 'chicharron' },
+        totalPrice: 30
+      },
+      {
+        product: mockProducts[1],
+        quantity: 1,
+        selectedOptions: { size: 'medium' },
+        totalPrice: 20
+      }
+    ],
+    total: 58,
+    deliveryFee: 8,
+    status: 'cancelado',
+    customerInfo: {
+      name: 'Roberto Díaz',
+      phone: '+51 954321098',
+      address: 'Av. Venezuela 567',
+      district: 'Lima Cercado',
+      reference: 'Edificio comercial, oficina 5B'
+    },
+    paymentMethod: 'efectivo',
+    createdAt: '2024-01-15T07:45:00Z',
+    estimatedDelivery: 'Cancelado'
+  },
+  {
+    id: 'ORD-007',
+    items: [
+      {
+        product: mockProducts[4],
+        quantity: 1,
+        selectedOptions: { protein: 'pollo' },
+        totalPrice: 45
+      }
+    ],
+    total: 50,
+    deliveryFee: 5,
+    status: 'preparing',
+    customerInfo: {
+      name: 'Sofía Ramírez',
+      phone: '+51 943210987',
+      address: 'Jr. Ucayali 890',
+      district: 'San Miguel',
+      reference: 'Casa amarilla con jardín'
+    },
+    paymentMethod: 'pago_movil',
+    createdAt: '2024-01-15T11:45:00Z',
+    estimatedDelivery: '40-55 minutos'
   }
 ];
 
@@ -246,3 +402,152 @@ export const districts = [
   { name: 'Miraflores', deliveryFee: 9, available: true },
   { name: 'Barranco', deliveryFee: 10, available: true }
 ];
+
+// Mock Users para UsersPage
+export const mockUsers = [
+  {
+    id: '1',
+    name: 'María García',
+    email: 'maria@example.com',
+    phone: '+51 987654321',
+    role: 'customer' as const,
+    createdAt: '2024-01-15T10:30:00Z',
+    totalOrders: 12,
+    totalSpent: 456
+  },
+  {
+    id: '2',
+    name: 'Admin Usuario',
+    email: 'admin@amazoniacrujiente.pe',
+    phone: '+51 999888777',
+    role: 'admin' as const,
+    createdAt: '2024-01-01T00:00:00Z',
+    totalOrders: 0,
+    totalSpent: 0
+  },
+  {
+    id: '3',
+    name: 'Carlos Mendoza',
+    email: 'carlos.mendoza@gmail.com',
+    phone: '+51 998877665',
+    role: 'customer' as const,
+    createdAt: '2024-01-10T08:15:00Z',
+    totalOrders: 8,
+    totalSpent: 342
+  },
+  {
+    id: '4',
+    name: 'Ana Rodríguez',
+    email: 'ana.rodriguez@yahoo.com',
+    phone: '+51 987123456',
+    role: 'customer' as const,
+    createdAt: '2024-01-12T14:20:00Z',
+    totalOrders: 15,
+    totalSpent: 678
+  },
+  {
+    id: '5',
+    name: 'Luis Torres',
+    email: 'luis.torres@hotmail.com',
+    phone: '+51 976543210',
+    role: 'customer' as const,
+    createdAt: '2024-01-08T11:00:00Z',
+    totalOrders: 6,
+    totalSpent: 234
+  },
+  {
+    id: '6',
+    name: 'Patricia Vega',
+    email: 'patricia.vega@outlook.com',
+    phone: '+51 965432109',
+    role: 'customer' as const,
+    createdAt: '2024-01-14T16:45:00Z',
+    totalOrders: 3,
+    totalSpent: 156
+  },
+  {
+    id: '7',
+    name: 'Roberto Díaz',
+    email: 'roberto.diaz@gmail.com',
+    phone: '+51 954321098',
+    role: 'customer' as const,
+    createdAt: '2024-01-05T09:30:00Z',
+    totalOrders: 10,
+    totalSpent: 489
+  },
+  {
+    id: '8',
+    name: 'Sofía Ramírez',
+    email: 'sofia.ramirez@gmail.com',
+    phone: '+51 943210987',
+    role: 'customer' as const,
+    createdAt: '2024-01-11T12:00:00Z',
+    totalOrders: 7,
+    totalSpent: 312
+  },
+  {
+    id: '9',
+    name: 'Delivery Rider 1',
+    email: 'rider1@amazoniacrujiente.pe',
+    phone: '+51 932109876',
+    role: 'rider' as const,
+    createdAt: '2024-01-03T07:00:00Z',
+    totalOrders: 0,
+    totalSpent: 0
+  },
+  {
+    id: '10',
+    name: 'Delivery Rider 2',
+    email: 'rider2@amazoniacrujiente.pe',
+    phone: '+51 921098765',
+    role: 'rider' as const,
+    createdAt: '2024-01-04T07:00:00Z',
+    totalOrders: 0,
+    totalSpent: 0
+  }
+];
+
+// Mock Reports para ReportsPage
+export const mockReports = {
+  overview: {
+    totalRevenue: 3847,
+    totalOrders: 67,
+    averageOrderValue: 57.4,
+    topSellingProduct: 'Combo Selva - Completo',
+    revenueGrowth: 12.5,
+    ordersGrowth: 8.3
+  },
+  salesByDay: [
+    { date: '2024-01-09', revenue: 420, orders: 8 },
+    { date: '2024-01-10', revenue: 548, orders: 10 },
+    { date: '2024-01-11', revenue: 612, orders: 11 },
+    { date: '2024-01-12', revenue: 489, orders: 9 },
+    { date: '2024-01-13', revenue: 734, orders: 13 },
+    { date: '2024-01-14', revenue: 523, orders: 9 },
+    { date: '2024-01-15', revenue: 521, orders: 7 }
+  ],
+  salesByProduct: [
+    { productName: 'Combo Selva - Completo', quantity: 23, revenue: 1127 },
+    { productName: 'Combo Tradicional', quantity: 18, revenue: 594 },
+    { productName: 'Chifles Plátano Verde', quantity: 34, revenue: 578 },
+    { productName: 'Yuca Frita - Porción Familiar', quantity: 28, revenue: 532 },
+    { productName: 'Chifles Plátano Maduro', quantity: 26, revenue: 468 },
+    { productName: 'Camote Frito - Sabor Único', quantity: 19, revenue: 342 }
+  ],
+  salesByDistrict: [
+    { district: 'San Miguel', orders: 15, revenue: 687 },
+    { district: 'Miraflores', orders: 12, revenue: 834 },
+    { district: 'Magdalena', orders: 11, revenue: 523 },
+    { district: 'Lince', orders: 9, revenue: 456 },
+    { district: 'Pueblo Libre', orders: 8, revenue: 389 },
+    { district: 'San Isidro', orders: 7, revenue: 512 },
+    { district: 'Lima Cercado', orders: 5, revenue: 246 }
+  ],
+  topCustomers: [
+    { name: 'Ana Rodríguez', orders: 15, totalSpent: 678 },
+    { name: 'María García', orders: 12, totalSpent: 456 },
+    { name: 'Roberto Díaz', orders: 10, totalSpent: 489 },
+    { name: 'Carlos Mendoza', orders: 8, totalSpent: 342 },
+    { name: 'Sofía Ramírez', orders: 7, totalSpent: 312 }
+  ]
+};

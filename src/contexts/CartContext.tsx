@@ -1,4 +1,4 @@
-import { createContext, useContext, useReducer, ReactNode } from 'react';
+import { createContext, useContext, useReducer, ReactNode, useEffect } from 'react';
 import { CartItem, Product } from '../types';
 
 interface CartState {
@@ -14,7 +14,8 @@ type CartAction =
   | { type: 'CLEAR_CART' }
   | { type: 'TOGGLE_CART' }
   | { type: 'OPEN_CART' }
-  | { type: 'CLOSE_CART' };
+  | { type: 'CLOSE_CART' }
+  | { type: 'LOAD_CART'; payload: CartItem[] };
 
 const CartContext = createContext<{
   state: CartState;
@@ -134,7 +135,14 @@ function cartReducer(state: CartState, action: CartAction): CartState {
         ...state,
         isOpen: false
       };
-    
+
+    case 'LOAD_CART':
+      return {
+        ...state,
+        items: action.payload,
+        total: calculateTotal(action.payload)
+      };
+
     default:
       return state;
   }
@@ -146,33 +154,61 @@ const initialState: CartState = {
   total: 0
 };
 
+const CART_STORAGE_KEY = 'amazonia-crujiente-cart';
+
 export function CartProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(cartReducer, initialState);
-  
+
+  // Cargar carrito desde localStorage al montar el componente
+  useEffect(() => {
+    try {
+      const savedCart = localStorage.getItem(CART_STORAGE_KEY);
+      if (savedCart) {
+        const cartItems: CartItem[] = JSON.parse(savedCart);
+        dispatch({ type: 'LOAD_CART', payload: cartItems });
+      }
+    } catch (error) {
+      console.error('Error al cargar carrito desde localStorage:', error);
+    }
+  }, []);
+
+  // Guardar carrito en localStorage cuando cambie
+  useEffect(() => {
+    try {
+      if (state.items.length > 0) {
+        localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(state.items));
+      } else {
+        localStorage.removeItem(CART_STORAGE_KEY);
+      }
+    } catch (error) {
+      console.error('Error al guardar carrito en localStorage:', error);
+    }
+  }, [state.items]);
+
   const addToCart = (product: Product, quantity: number, selectedOptions: Record<string, string>) => {
     dispatch({ type: 'ADD_ITEM', payload: { product, quantity, selectedOptions } });
   };
-  
+
   const removeFromCart = (productId: string) => {
     dispatch({ type: 'REMOVE_ITEM', payload: productId });
   };
-  
+
   const updateQuantity = (productId: string, quantity: number) => {
     dispatch({ type: 'UPDATE_QUANTITY', payload: { productId, quantity } });
   };
-  
+
   const clearCart = () => {
     dispatch({ type: 'CLEAR_CART' });
   };
-  
+
   const toggleCart = () => {
     dispatch({ type: 'TOGGLE_CART' });
   };
-  
+
   const openCart = () => {
     dispatch({ type: 'OPEN_CART' });
   };
-  
+
   const closeCart = () => {
     dispatch({ type: 'CLOSE_CART' });
   };

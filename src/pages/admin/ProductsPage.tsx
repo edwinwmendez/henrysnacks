@@ -26,13 +26,16 @@ export function ProductsPage() {
   const loadProducts = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
-        .from('products')
-        .select('*')
-        .order('created_at', { ascending: false });
 
-      if (error) throw error;
-      setProducts(data || []);
+      // TODO: Cuando la base de datos esté lista, usar:
+      // const { data, error } = await supabase
+      //   .from('products')
+      //   .select('*')
+      //   .order('created_at', { ascending: false });
+
+      // Por ahora, usar datos mock
+      const { mockProducts } = await import('../../data/mockData');
+      setProducts(mockProducts);
     } catch (error) {
       console.error('Error loading products:', error);
     } finally {

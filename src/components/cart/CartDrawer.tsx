@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { X, Plus, Minus, ShoppingBag } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { formatPrice } from '../../lib/utils';
@@ -5,7 +6,7 @@ import { useCart } from '../../contexts/CartContext';
 
 export function CartDrawer() {
   const { state, closeCart, updateQuantity, removeFromCart } = useCart();
-  
+
   if (!state.isOpen) return null;
   
   const deliveryFee = state.items.length > 0 ? 5 : 0;
@@ -45,9 +46,11 @@ export function CartDrawer() {
                 </div>
                 <h3 className="text-lg font-medium text-gray-900">Carrito vacío</h3>
                 <p className="text-gray-500">¡Agrega algunos productos deliciosos!</p>
-                <Button onClick={closeCart} className="mt-4">
-                  Ver Productos
-                </Button>
+                <Link to="/catalogo" onClick={closeCart}>
+                  <Button className="mt-4">
+                    Ver Tienda
+                  </Button>
+                </Link>
               </div>
             </div>
           ) : (
@@ -138,10 +141,18 @@ export function CartDrawer() {
                   </div>
                 </div>
                 
-                <Button size="lg" className="w-full">
-                  Proceder al Checkout
-                </Button>
-                
+                <div className="space-y-3">
+                  <Button size="lg" className="w-full">
+                    Proceder al Checkout
+                  </Button>
+
+                  <Link to="/catalogo" onClick={closeCart}>
+                    <Button variant="outline" size="lg" className="w-full">
+                      Seguir Comprando
+                    </Button>
+                  </Link>
+                </div>
+
                 <p className="text-xs text-gray-500 text-center">
                   Pago contra entrega • Efectivo o pago móvil
                 </p>

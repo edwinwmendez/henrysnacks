@@ -32,13 +32,26 @@ export function UsersPage() {
   const loadUsers = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
-        .from('users_profile')
-        .select('*')
-        .order('created_at', { ascending: false });
 
-      if (error) throw error;
-      setUsers(data || []);
+      // TODO: Cuando la base de datos esté lista, usar:
+      // const { data, error } = await supabase
+      //   .from('users_profile')
+      //   .select('*')
+      //   .order('created_at', { ascending: false });
+
+      // Por ahora, usar datos mock
+      const { mockUsers } = await import('../../data/mockData');
+      const usersData: UserProfile[] = mockUsers.map(u => ({
+        id: u.id,
+        name: u.name,
+        phone: u.phone,
+        role: u.role,
+        addresses: [],
+        created_at: u.createdAt,
+        updated_at: u.createdAt,
+        email: u.email
+      }));
+      setUsers(usersData);
     } catch (error) {
       console.error('Error loading users:', error);
     } finally {

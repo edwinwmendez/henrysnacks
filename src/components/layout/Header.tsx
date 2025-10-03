@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { ShoppingCart, Menu, Search, User } from 'lucide-react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { ShoppingCart, Menu, Search, User, LayoutDashboard } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { useCart } from '../../contexts/CartContext';
 import { useAuth } from '../../contexts/AuthContext';
@@ -10,6 +11,26 @@ export function Header() {
   const { state, toggleCart } = useCart();
   const { state: authState } = useAuth();
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleNavClick = (hash: string) => {
+    setMobileMenuOpen(false);
+    if (location.pathname === '/') {
+      // Si estamos en home, hacer scroll
+      const element = document.querySelector(hash);
+      element?.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      // Si estamos en otra página, navegar a home con hash
+      navigate('/' + hash);
+      // Después de navegar, hacer scroll
+      setTimeout(() => {
+        const element = document.querySelector(hash);
+        element?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+  };
   
   return (
     <>
@@ -17,29 +38,49 @@ export function Header() {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <div className="flex items-center space-x-2">
+          <Link to="/" className="flex items-center space-x-2">
             <div className="w-8 h-8 bg-gradient-to-br from-[#0B8A5F] to-[#F3C64B] rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">AC</span>
             </div>
             <h1 className="text-xl font-bold bg-gradient-to-r from-[#0B8A5F] to-[#F48C42] bg-clip-text text-transparent">
               Amazonía Crujiente
             </h1>
-          </div>
+          </Link>
           
           {/* Navigation - Hidden on mobile */}
           <nav className="hidden md:flex items-center space-x-8">
-            <a href="#inicio" className="text-[#5C3A21] hover:text-[#0B8A5F] transition-colors">
+            <Link to="/" className="text-[#5C3A21] hover:text-[#0B8A5F] transition-colors">
               Inicio
-            </a>
-            <a href="#productos" className="text-[#5C3A21] hover:text-[#0B8A5F] transition-colors">
+            </Link>
+            <button
+              onClick={() => handleNavClick('#productos')}
+              className="text-[#5C3A21] hover:text-[#0B8A5F] transition-colors"
+            >
               Productos
-            </a>
-            <a href="#combos" className="text-[#5C3A21] hover:text-[#0B8A5F] transition-colors">
+            </button>
+            <button
+              onClick={() => handleNavClick('#combos')}
+              className="text-[#5C3A21] hover:text-[#0B8A5F] transition-colors"
+            >
               Combos
-            </a>
-            <a href="#historia" className="text-[#5C3A21] hover:text-[#0B8A5F] transition-colors">
+            </button>
+            <button
+              onClick={() => handleNavClick('#historia')}
+              className="text-[#5C3A21] hover:text-[#0B8A5F] transition-colors"
+            >
               Nuestra Historia
-            </a>
+            </button>
+
+            {/* Separator */}
+            <div className="h-6 w-px bg-gray-300"></div>
+
+            {/* Special CTA */}
+            <Link
+              to="/catalogo"
+              className="px-4 py-2 border-2 border-[#0B8A5F] text-[#0B8A5F] rounded-lg hover:bg-[#0B8A5F] hover:text-white transition-all font-medium"
+            >
+              Tienda
+            </Link>
           </nav>
           
           {/* Actions */}
@@ -48,13 +89,23 @@ export function Header() {
               <Search className="w-4 h-4 mr-2" />
               Buscar
             </Button>
-            
+
+            {/* Admin Panel Link - Only visible for admin users */}
+            {authState.isAuthenticated && authState.user?.role === 'admin' && (
+              <Link to="/admin">
+                <Button variant="ghost" size="sm" className="hidden sm:flex bg-[#0B8A5F]/10 text-[#0B8A5F] hover:bg-[#0B8A5F]/20">
+                  <LayoutDashboard className="w-4 h-4 mr-2" />
+                  Panel Admin
+                </Button>
+              </Link>
+            )}
+
             {authState.isAuthenticated ? (
               <UserMenu />
             ) : (
-              <Button 
-                variant="ghost" 
-                size="sm" 
+              <Button
+                variant="ghost"
+                size="sm"
                 className="hidden sm:flex"
                 onClick={() => setShowAuthModal(true)}
               >
@@ -78,14 +129,79 @@ export function Header() {
               )}
             </Button>
             
-            <Button variant="ghost" size="sm" className="md:hidden">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="md:hidden"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
               <Menu className="w-4 h-4" />
             </Button>
           </div>
         </div>
+
+        {/* Mobile Menu */}
+        {mobileMenuOpen && (
+          <div className="md:hidden border-t border-gray-200 bg-white">
+            <nav className="container mx-auto px-4 py-4 space-y-2">
+              <Link
+                to="/"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block py-2 text-[#5C3A21] hover:text-[#0B8A5F] transition-colors"
+              >
+                Inicio
+              </Link>
+              <button
+                onClick={() => handleNavClick('#productos')}
+                className="block w-full text-left py-2 text-[#5C3A21] hover:text-[#0B8A5F] transition-colors"
+              >
+                Productos
+              </button>
+              <button
+                onClick={() => handleNavClick('#combos')}
+                className="block w-full text-left py-2 text-[#5C3A21] hover:text-[#0B8A5F] transition-colors"
+              >
+                Combos
+              </button>
+              <button
+                onClick={() => handleNavClick('#historia')}
+                className="block w-full text-left py-2 text-[#5C3A21] hover:text-[#0B8A5F] transition-colors"
+              >
+                Nuestra Historia
+              </button>
+
+              {/* Admin Link - Only for admin users */}
+              {authState.isAuthenticated && authState.user?.role === 'admin' && (
+                <>
+                  <div className="border-t border-gray-200 my-2"></div>
+                  <Link
+                    to="/admin"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center justify-center py-3 bg-[#0B8A5F]/10 text-[#0B8A5F] rounded-lg hover:bg-[#0B8A5F]/20 transition-all font-medium"
+                  >
+                    <LayoutDashboard className="w-4 h-4 mr-2" />
+                    Panel Admin
+                  </Link>
+                </>
+              )}
+
+              {/* Separator */}
+              <div className="border-t border-gray-200 my-2"></div>
+
+              {/* Special CTA */}
+              <Link
+                to="/catalogo"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block text-center py-3 border-2 border-[#0B8A5F] text-[#0B8A5F] rounded-lg hover:bg-[#0B8A5F] hover:text-white transition-all font-medium"
+              >
+                Tienda
+              </Link>
+            </nav>
+          </div>
+        )}
       </div>
       </header>
-      
+
       <AuthModal 
         isOpen={showAuthModal} 
         onClose={() => setShowAuthModal(false)} 

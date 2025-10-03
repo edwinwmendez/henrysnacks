@@ -51,104 +51,28 @@ export function ReportsPage() {
     try {
       setLoading(true);
 
-      const now = new Date();
-      const startDate = new Date();
+      // TODO: Cuando la base de datos esté lista, implementar filtros por fecha
 
-      if (dateRange === 'week') {
-        startDate.setDate(now.getDate() - 7);
-      } else if (dateRange === 'month') {
-        startDate.setMonth(now.getMonth() - 1);
-      } else {
-        startDate.setFullYear(now.getFullYear() - 1);
-      }
-
-      const { data: orders, error: ordersError } = await supabase
-        .from('orders')
-        .select('*')
-        .gte('created_at', startDate.toISOString())
-        .neq('status', 'cancelado');
-
-      if (ordersError) throw ordersError;
-
-      const { data: allOrders, error: allOrdersError } = await supabase
-        .from('orders')
-        .select('*')
-        .neq('status', 'cancelado');
-
-      if (allOrdersError) throw allOrdersError;
-
-      const { data: users, error: usersError } = await supabase
-        .from('users_profile')
-        .select('*')
-        .gte('created_at', startDate.toISOString());
-
-      if (usersError) throw usersError;
-
-      const totalRevenue = orders?.reduce((sum, order) => sum + parseFloat(order.total.toString()), 0) || 0;
-      const totalOrders = orders?.length || 0;
-      const averageOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
-
-      const previousStartDate = new Date(startDate);
-      if (dateRange === 'week') {
-        previousStartDate.setDate(previousStartDate.getDate() - 7);
-      } else if (dateRange === 'month') {
-        previousStartDate.setMonth(previousStartDate.getMonth() - 1);
-      } else {
-        previousStartDate.setFullYear(previousStartDate.getFullYear() - 1);
-      }
-
-      const previousOrders = allOrders?.filter(
-        order => new Date(order.created_at) >= previousStartDate && new Date(order.created_at) < startDate
-      ) || [];
-
-      const previousRevenue = previousOrders.reduce((sum, order) => sum + parseFloat(order.total.toString()), 0);
-      const revenueGrowth = previousRevenue > 0 ? ((totalRevenue - previousRevenue) / previousRevenue) * 100 : 0;
-      const ordersGrowth = previousOrders.length > 0 ? ((totalOrders - previousOrders.length) / previousOrders.length) * 100 : 0;
+      // Por ahora, usar datos mock
+      const { mockReports } = await import('../../data/mockData');
 
       setSalesData({
-        totalRevenue,
-        totalOrders,
-        averageOrderValue,
-        newCustomers: users?.length || 0,
-        revenueGrowth,
-        ordersGrowth,
+        totalRevenue: mockReports.overview.totalRevenue,
+        totalOrders: mockReports.overview.totalOrders,
+        averageOrderValue: mockReports.overview.averageOrderValue,
+        newCustomers: 12,
+        revenueGrowth: mockReports.overview.revenueGrowth,
+        ordersGrowth: mockReports.overview.ordersGrowth
       });
 
-      const productSales = new Map<string, { name: string; quantity: number; revenue: number }>();
-      orders?.forEach(order => {
-        order.items.forEach((item: any) => {
-          const existing = productSales.get(item.product.id) || {
-            name: item.product.name,
-            quantity: 0,
-            revenue: 0
-          };
-          productSales.set(item.product.id, {
-            name: item.product.name,
-            quantity: existing.quantity + item.quantity,
-            revenue: existing.revenue + (item.totalPrice * item.quantity)
-          });
-        });
-      });
+      setTopProducts(mockReports.salesByProduct.map(p => ({
+        id: p.productName,
+        name: p.productName,
+        quantity: p.quantity,
+        revenue: p.revenue
+      })));
 
-      const topProductsArray = Array.from(productSales.entries())
-        .map(([id, data]) => ({ id, ...data }))
-        .sort((a, b) => b.revenue - a.revenue)
-        .slice(0, 5);
-
-      setTopProducts(topProductsArray);
-
-      const revenueByDayMap = new Map<string, number>();
-      orders?.forEach(order => {
-        const date = new Date(order.created_at).toLocaleDateString('es-PE');
-        const current = revenueByDayMap.get(date) || 0;
-        revenueByDayMap.set(date, current + parseFloat(order.total.toString()));
-      });
-
-      const revenueByDayArray = Array.from(revenueByDayMap.entries())
-        .map(([date, revenue]) => ({ date, revenue }))
-        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-
-      setRevenueByDay(revenueByDayArray);
+      setRevenueByDay(mockReports.salesByDay);
 
     } catch (error) {
       console.error('Error loading reports:', error);

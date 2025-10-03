@@ -40,16 +40,34 @@ export function CombosPage() {
   const loadData = async () => {
     try {
       setLoading(true);
-      const [combosRes, productsRes] = await Promise.all([
-        supabase.from('combos').select('*').order('created_at', { ascending: false }),
-        supabase.from('products').select('*')
-      ]);
 
-      if (combosRes.error) throw combosRes.error;
-      if (productsRes.error) throw productsRes.error;
+      // TODO: Cuando la base de datos esté lista, usar:
+      // const [combosRes, productsRes] = await Promise.all([
+      //   supabase.from('combos').select('*').order('created_at', { ascending: false }),
+      //   supabase.from('products').select('*')
+      // ]);
 
-      setCombos(combosRes.data || []);
-      setProducts(productsRes.data || []);
+      // Por ahora, usar datos mock
+      const { mockProducts } = await import('../../data/mockData');
+      const combosFromMock = mockProducts.filter(p => p.category === 'combo');
+
+      // Convertir los productos combo al formato Combo
+      const combosData: Combo[] = combosFromMock.map(p => ({
+        id: p.id,
+        name: p.name,
+        slug: p.slug,
+        description: p.description,
+        price: p.price,
+        discount_percentage: 0,
+        product_ids: [],
+        images: p.images,
+        active: p.available,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      }));
+
+      setCombos(combosData);
+      setProducts(mockProducts);
     } catch (error) {
       console.error('Error loading data:', error);
     } finally {

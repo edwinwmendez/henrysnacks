@@ -10,6 +10,7 @@ import { CombosPage } from './pages/admin/CombosPage';
 import { UsersPage } from './pages/admin/UsersPage';
 import { ReportsPage } from './pages/admin/ReportsPage';
 import { SettingsPage } from './pages/admin/SettingsPage';
+import { ProtectedRoute } from './components/auth/ProtectedRoute';
 
 function App() {
   return (
@@ -21,13 +22,57 @@ function App() {
               <Route path="/" element={<HomePage />} />
               <Route path="/catalogo" element={<CatalogPage />} />
               <Route path="/producto/:slug" element={<ProductDetailPage />} />
+
+              {/* Admin Routes - Protected */}
               <Route path="/admin" element={<Navigate to="/admin/orders" replace />} />
-              <Route path="/admin/orders" element={<OrdersPage />} />
-              <Route path="/admin/products" element={<ProductsPage />} />
-              <Route path="/admin/combos" element={<CombosPage />} />
-              <Route path="/admin/users" element={<UsersPage />} />
-              <Route path="/admin/reports" element={<ReportsPage />} />
-              <Route path="/admin/settings" element={<SettingsPage />} />
+              <Route
+                path="/admin/orders"
+                element={
+                  <ProtectedRoute requireAdmin>
+                    <OrdersPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/products"
+                element={
+                  <ProtectedRoute requireAdmin>
+                    <ProductsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/combos"
+                element={
+                  <ProtectedRoute requireAdmin>
+                    <CombosPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/users"
+                element={
+                  <ProtectedRoute requireAdmin>
+                    <UsersPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/reports"
+                element={
+                  <ProtectedRoute requireAdmin>
+                    <ReportsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/settings"
+                element={
+                  <ProtectedRoute requireAdmin>
+                    <SettingsPage />
+                  </ProtectedRoute>
+                }
+              />
             </Routes>
           </div>
         </CartProvider>

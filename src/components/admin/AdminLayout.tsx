@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
   LayoutDashboard,
   ShoppingBag,
@@ -64,9 +65,10 @@ export function AdminLayout({ children, currentPage }: AdminLayoutProps) {
             const isActive = currentPage === item.id;
 
             return (
-              <a
+              <Link
                 key={item.id}
-                href={item.path}
+                to={item.path}
+                onClick={() => setSidebarOpen(false)}
                 className={`
                   flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors
                   ${isActive
@@ -77,7 +79,7 @@ export function AdminLayout({ children, currentPage }: AdminLayoutProps) {
               >
                 <Icon className="w-5 h-5" />
                 <span className="font-medium">{item.label}</span>
-              </a>
+              </Link>
             );
           })}
         </nav>
@@ -120,12 +122,12 @@ export function AdminLayout({ children, currentPage }: AdminLayoutProps) {
           </h2>
 
           <div className="flex items-center space-x-4">
-            <a
-              href="/"
+            <Link
+              to="/"
               className="text-sm text-gray-600 hover:text-[#0B8A5F] transition-colors"
             >
               Ver sitio web
-            </a>
+            </Link>
           </div>
         </header>
 
