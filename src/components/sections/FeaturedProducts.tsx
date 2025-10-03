@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { Star, Plus, Leaf } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { formatPrice } from '../../lib/utils';
@@ -13,9 +14,9 @@ interface ProductCardProps {
 function ProductCard({ product, onAddToCart }: ProductCardProps) {
   return (
     <div className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden">
-      <div className="relative aspect-[4/3] overflow-hidden">
-        <img 
-          src={product.images[0]} 
+      <Link to={`/producto/${product.slug}`} className="block relative aspect-[4/3] overflow-hidden">
+        <img
+          src={product.images[0]}
           alt={product.name}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
         />
@@ -47,7 +48,7 @@ function ProductCard({ product, onAddToCart }: ProductCardProps) {
             <Plus className="w-4 h-4" />
           </Button>
         </div>
-      </div>
+      </Link>
       
       <div className="p-6 space-y-4">
         {/* Category */}
@@ -56,9 +57,11 @@ function ProductCard({ product, onAddToCart }: ProductCardProps) {
         </span>
         
         {/* Title */}
-        <h3 className="text-xl font-bold text-[#5C3A21] group-hover:text-[#0B8A5F] transition-colors">
-          {product.name}
-        </h3>
+        <Link to={`/producto/${product.slug}`}>
+          <h3 className="text-xl font-bold text-[#5C3A21] hover:text-[#0B8A5F] transition-colors cursor-pointer">
+            {product.name}
+          </h3>
+        </Link>
         
         {/* Description */}
         <p className="text-gray-600 text-sm leading-relaxed line-clamp-2">

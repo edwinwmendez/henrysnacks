@@ -151,7 +151,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('auth_user', JSON.stringify(user));
     dispatch({ type: 'LOGIN_SUCCESS', payload: user });
   };
-  const register = async (name: string, email: string, phone: string, password: string): Promise<void> => {
+  const register = async (name: string, email: string, phone: string, _password: string): Promise<void> => {
     dispatch({ type: 'REGISTER_START' });
 
     // Simulate API delay

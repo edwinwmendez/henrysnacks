@@ -26,7 +26,8 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login' }: AuthModalP
     if (state.isAuthenticated) {
       onClose();
     }
-  }, [state.isAuthenticated, onClose]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.isAuthenticated]);
 
   useEffect(() => {
     if (isOpen) {
@@ -39,7 +40,8 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login' }: AuthModalP
         confirmPassword: ''
       });
     }
-  }, [isOpen, clearError]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -72,8 +74,8 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login' }: AuthModalP
       />
       
       {/* Modal */}
-      <div className="fixed inset-0 flex items-center justify-center p-4 pointer-events-none">
-        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md transform transition-all pointer-events-auto max-h-[90vh] overflow-y-auto">
+      <div className="fixed inset-0 flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md transform transition-all max-h-[90vh] overflow-y-auto">
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b">
             <h2 className="text-2xl font-bold text-[#5C3A21]">
