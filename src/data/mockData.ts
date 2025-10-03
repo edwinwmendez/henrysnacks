@@ -224,8 +224,8 @@ export const mockOrders: Order[] = [
     customerInfo: {
       name: 'María García',
       phone: '+51 987654321',
-      address: 'Av. La Marina 2355',
-      district: 'San Miguel',
+      address: 'Jr. Rivas Arcos 234',
+      district: 'Centro de Atalaya',
       reference: 'Casa color verde, puerta marrón'
     },
     paymentMethod: 'efectivo',
@@ -254,8 +254,8 @@ export const mockOrders: Order[] = [
     customerInfo: {
       name: 'Carlos Mendoza',
       phone: '+51 998877665',
-      address: 'Jr. Manco Cápac 456',
-      district: 'Magdalena',
+      address: 'Jr. Pangoa 456',
+      district: 'Centro de Atalaya',
       reference: 'Edificio azul, dpto 302'
     },
     paymentMethod: 'pago_movil',
@@ -278,8 +278,8 @@ export const mockOrders: Order[] = [
     customerInfo: {
       name: 'Ana Rodríguez',
       phone: '+51 987123456',
-      address: 'Av. Arequipa 1234',
-      district: 'Lince',
+      address: 'Jr. Ene 123',
+      district: 'Raymondi',
       reference: 'Frente al parque'
     },
     paymentMethod: 'efectivo',
@@ -302,8 +302,8 @@ export const mockOrders: Order[] = [
     customerInfo: {
       name: 'Luis Torres',
       phone: '+51 976543210',
-      address: 'Calle Los Pinos 789',
-      district: 'Miraflores',
+      address: 'Jr. Ucayali 789',
+      district: 'Centro de Atalaya',
       reference: 'Casa esquina, portón negro'
     },
     paymentMethod: 'pago_movil',
@@ -326,8 +326,8 @@ export const mockOrders: Order[] = [
     customerInfo: {
       name: 'Patricia Vega',
       phone: '+51 965432109',
-      address: 'Av. Brasil 2020',
-      district: 'Pueblo Libre',
+      address: 'Jr. Raymondi 202',
+      district: 'Raymondi',
       reference: 'Al lado de la farmacia'
     },
     paymentMethod: 'efectivo',
@@ -356,8 +356,8 @@ export const mockOrders: Order[] = [
     customerInfo: {
       name: 'Roberto Díaz',
       phone: '+51 954321098',
-      address: 'Av. Venezuela 567',
-      district: 'Lima Cercado',
+      address: 'Jr. Iquitos 567',
+      district: 'Centro de Atalaya',
       reference: 'Edificio comercial, oficina 5B'
     },
     paymentMethod: 'efectivo',
@@ -381,7 +381,7 @@ export const mockOrders: Order[] = [
       name: 'Sofía Ramírez',
       phone: '+51 943210987',
       address: 'Jr. Ucayali 890',
-      district: 'San Miguel',
+      district: 'Centro de Atalaya',
       reference: 'Casa amarilla con jardín'
     },
     paymentMethod: 'pago_movil',
@@ -391,16 +391,11 @@ export const mockOrders: Order[] = [
 ];
 
 export const districts = [
-  { name: 'San Miguel', deliveryFee: 5, available: true },
-  { name: 'Magdalena', deliveryFee: 5, available: true },
-  { name: 'Pueblo Libre', deliveryFee: 6, available: true },
-  { name: 'Jesús María', deliveryFee: 6, available: true },
-  { name: 'Lince', deliveryFee: 7, available: true },
-  { name: 'La Victoria', deliveryFee: 8, available: true },
-  { name: 'Lima Cercado', deliveryFee: 8, available: true },
-  { name: 'San Isidro', deliveryFee: 7, available: true },
-  { name: 'Miraflores', deliveryFee: 9, available: true },
-  { name: 'Barranco', deliveryFee: 10, available: true }
+  { name: 'Centro de Atalaya', deliveryFee: 5, available: true },
+  { name: 'Raymondi', deliveryFee: 5, available: true },
+  { name: 'Sepahua', deliveryFee: 8, available: true },
+  { name: 'Tahuania', deliveryFee: 10, available: true },
+  { name: 'Yurúa', deliveryFee: 12, available: true }
 ];
 
 // Mock Users para UsersPage
@@ -535,13 +530,11 @@ export const mockReports = {
     { productName: 'Camote Frito - Sabor Único', quantity: 19, revenue: 342 }
   ],
   salesByDistrict: [
-    { district: 'San Miguel', orders: 15, revenue: 687 },
-    { district: 'Miraflores', orders: 12, revenue: 834 },
-    { district: 'Magdalena', orders: 11, revenue: 523 },
-    { district: 'Lince', orders: 9, revenue: 456 },
-    { district: 'Pueblo Libre', orders: 8, revenue: 389 },
-    { district: 'San Isidro', orders: 7, revenue: 512 },
-    { district: 'Lima Cercado', orders: 5, revenue: 246 }
+    { district: 'Centro de Atalaya', orders: 25, revenue: 1287 },
+    { district: 'Raymondi', orders: 18, revenue: 834 },
+    { district: 'Sepahua', orders: 12, revenue: 623 },
+    { district: 'Tahuania', orders: 8, revenue: 456 },
+    { district: 'Yurúa', orders: 4, revenue: 247 }
   ],
   topCustomers: [
     { name: 'Ana Rodríguez', orders: 15, totalSpent: 678 },

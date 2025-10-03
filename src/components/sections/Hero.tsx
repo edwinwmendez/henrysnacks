@@ -1,110 +1,208 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Leaf, Star } from 'lucide-react';
+import { ArrowRight, Leaf, Star, ShoppingCart, Check } from 'lucide-react';
 import { Button } from '../ui/Button';
+import { useCart } from '../../contexts/CartContext';
+import { mockProducts } from '../../data/mockData';
 
 export function Hero() {
+  const { addToCart } = useCart();
+  const [selectedSize, setSelectedSize] = useState('medium');
+  const [selectedProtein, setSelectedProtein] = useState('mixto');
+  const [isAdding, setIsAdding] = useState(false);
+
+  // Producto destacado: Combo Selva (el más vendido)
+  const featuredProduct = mockProducts.find(p => p.id === '5') || mockProducts[4];
+
+  const handleAddToCart = () => {
+    setIsAdding(true);
+    const selectedOptions = {
+      protein: selectedProtein
+    };
+    addToCart(featuredProduct, 1, selectedOptions);
+
+    setTimeout(() => {
+      setIsAdding(false);
+    }, 2000);
+  };
+
   return (
-    <section className="relative min-h-screen bg-gradient-to-br from-[#0B8A5F] via-[#0B8A5F] to-[#5C3A21] overflow-hidden">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg width=%2260%22 height=%2260%22 viewBox=%220 0 60 60%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cg fill=%22none%22 fill-rule=%22evenodd%22%3E%3Cg fill=%22%23FFFFFF%22 fill-opacity=%220.3%22%3E%3Cpath d=%22M30 30c0-16.569 13.431-30 30-30v60C43.431 60 30 46.569 30 30zM0 30c0-16.569 13.431-30 30-30v60C13.431 60 0 46.569 0 30z%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] animate-pulse"></div>
+    <section className="relative bg-gradient-to-br from-[#0B8A5F] via-[#0B8A5F] to-[#074d3a] overflow-hidden">
+      {/* Background Image */}
+      <div className="absolute inset-0">
+        <img
+          src="https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg"
+          alt="Background"
+          className="w-full h-full object-cover opacity-10"
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0B8A5F]/90 via-[#0B8A5F]/85 to-[#074d3a]/90"></div>
       </div>
-      
-      <div className="relative container mx-auto px-4 py-20">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center min-h-[80vh]">
-          {/* Content */}
-          <div className="text-white space-y-8">
+
+      <div className="relative container mx-auto px-4 py-8 lg:py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-center">
+
+          {/* Content Side */}
+          <div className="text-white space-y-4 lg:space-y-6">
             {/* Badge */}
-            <div className="flex items-center space-x-2 text-[#F3C64B]">
-              <Leaf className="w-5 h-5" />
-              <span className="text-sm font-medium tracking-wide uppercase">
-                Auténticos sabores amazónicos
+            <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/20">
+              <Leaf className="w-4 h-4 text-[#F3C64B]" />
+              <span className="text-sm font-medium text-[#F3C64B]">
+                Auténticos sabores de la Amazonía
               </span>
             </div>
-            
-            {/* Headlines */}
-            <div className="space-y-4">
-              <h1 className="text-4xl md:text-6xl font-bold leading-tight">
-                Crujiente tradición de la 
-                <span className="text-[#F3C64B] block">Amazonía</span>
+
+            {/* Main Headline */}
+            <div className="space-y-3">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
+                Sabores que cuentan
+                <span className="text-[#F3C64B] block mt-2">historias</span>
               </h1>
-              <p className="text-xl text-white/90 leading-relaxed max-w-xl">
-                Chifles, yuca y camote directo de la selva a tu mesa. 
-                Sabores ancestrales preparados con técnicas tradicionales.
+              <p className="text-base md:text-lg text-white/90 leading-relaxed max-w-xl">
+                Descubre la tradición culinaria amazónica en cada bocado.
+                Chifles, yuca y camote preparados con recetas ancestrales.
               </p>
             </div>
-            
+
             {/* Stats */}
-            <div className="flex items-center space-x-8">
+            <div className="grid grid-cols-3 gap-4 lg:gap-6 max-w-lg">
               <div className="text-center">
-                <div className="flex items-center space-x-1 text-[#F3C64B] mb-1">
+                <div className="flex items-center justify-center space-x-0.5 text-[#F3C64B] mb-1">
                   <Star className="w-4 h-4 fill-current" />
                   <Star className="w-4 h-4 fill-current" />
                   <Star className="w-4 h-4 fill-current" />
                   <Star className="w-4 h-4 fill-current" />
                   <Star className="w-4 h-4 fill-current" />
                 </div>
-                <p className="text-sm text-white/80">500+ clientes felices</p>
+                <p className="text-xs text-white/70">500+ clientes</p>
               </div>
-              <div className="text-center">
+              <div className="text-center border-x border-white/20">
                 <p className="text-2xl font-bold text-[#F3C64B]">45min</p>
-                <p className="text-sm text-white/80">Entrega promedio</p>
+                <p className="text-xs text-white/70">Entrega</p>
               </div>
               <div className="text-center">
                 <p className="text-2xl font-bold text-[#F3C64B]">100%</p>
-                <p className="text-sm text-white/80">Natural</p>
+                <p className="text-xs text-white/70">Natural</p>
               </div>
             </div>
-            
-            {/* CTAs */}
-            <div className="flex flex-col sm:flex-row gap-4 pt-4">
+
+            {/* CTA */}
+            <div className="pt-2">
               <Link to="/catalogo">
-                <Button size="lg" className="group bg-[#F3C64B] text-[#5C3A21] hover:bg-[#F3C64B]/90">
-                  Ver Catálogo
+                <Button
+                  size="lg"
+                  className="group bg-[#F3C64B] text-[#5C3A21] hover:bg-[#F3C64B]/90 text-lg px-8 py-6 rounded-xl shadow-2xl hover:shadow-[#F3C64B]/20 transition-all"
+                >
+                  Explorar Catálogo
                   <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
-              <a href="#productos">
-                <Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-[#0B8A5F]">
-                  Pedir Ahora
-                </Button>
-              </a>
             </div>
           </div>
-          
-          {/* Image */}
+
+          {/* Product Card Side */}
           <div className="relative">
-            <div className="relative aspect-square rounded-3xl overflow-hidden shadow-2xl">
-              <img 
-                src="https://images.pexels.com/photos/5840219/pexels-photo-5840219.jpeg" 
-                alt="Chifles y productos amazónicos" 
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-            </div>
-            
-            {/* Floating Cards */}
-            <div className="absolute -top-4 -left-4 bg-white rounded-2xl p-4 shadow-xl">
-              <div className="flex items-center space-x-2">
-                <div className="w-3 h-3 bg-[#0B8A5F] rounded-full animate-pulse"></div>
-                <span className="text-sm font-medium text-[#5C3A21]">Preparando tu pedido</span>
+            {/* Main Product Card */}
+            <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+              {/* Product Image */}
+              <div className="relative aspect-video overflow-hidden bg-gradient-to-br from-gray-100 to-gray-50">
+                <img
+                  src={featuredProduct.images[0]}
+                  alt={featuredProduct.name}
+                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                />
+                {/* Best Seller Badge */}
+                <div className="absolute top-4 left-4 bg-[#F48C42] text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg">
+                  🔥 Más Vendido
+                </div>
+              </div>
+
+              {/* Product Info */}
+              <div className="p-4 lg:p-6 space-y-4">
+                <div>
+                  <h3 className="text-xl lg:text-2xl font-bold text-[#5C3A21] mb-1.5">
+                    {featuredProduct.name}
+                  </h3>
+                  <p className="text-sm text-gray-600 leading-relaxed">
+                    {featuredProduct.description}
+                  </p>
+                </div>
+
+                {/* Options */}
+                {featuredProduct.options && featuredProduct.options.length > 0 && (
+                  <div className="space-y-3">
+                    {featuredProduct.options.find(opt => opt.id === 'protein') && (
+                      <div>
+                        <label className="block text-sm font-semibold text-[#5C3A21] mb-2">
+                          Proteína Principal
+                        </label>
+                        <div className="grid grid-cols-3 gap-2">
+                          {featuredProduct.options
+                            .find(opt => opt.id === 'protein')
+                            ?.options.map(option => (
+                              <button
+                                key={option.id}
+                                onClick={() => setSelectedProtein(option.id)}
+                                className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                                  selectedProtein === option.id
+                                    ? 'bg-[#0B8A5F] text-white'
+                                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                }`}
+                              >
+                                {option.name}
+                              </button>
+                            ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Price and Add to Cart */}
+                <div className="flex items-center justify-between pt-3 border-t border-gray-200">
+                  <div>
+                    <p className="text-xs text-gray-500">Precio</p>
+                    <p className="text-2xl font-bold text-[#0B8A5F]">
+                      S/ {featuredProduct.price}
+                    </p>
+                  </div>
+                  <Button
+                    onClick={handleAddToCart}
+                    disabled={isAdding}
+                    className={`px-5 py-2.5 rounded-xl font-semibold transition-all text-sm ${
+                      isAdding
+                        ? 'bg-green-500 text-white'
+                        : 'bg-[#0B8A5F] text-white hover:bg-[#0B8A5F]/90'
+                    }`}
+                  >
+                    {isAdding ? (
+                      <>
+                        <Check className="w-5 h-5 mr-2" />
+                        ¡Agregado!
+                      </>
+                    ) : (
+                      <>
+                        <ShoppingCart className="w-5 h-5 mr-2" />
+                        Agregar
+                      </>
+                    )}
+                  </Button>
+                </div>
               </div>
             </div>
-            
-            <div className="absolute -bottom-4 -right-4 bg-white rounded-2xl p-4 shadow-xl">
-              <div className="text-center">
-                <p className="text-2xl font-bold text-[#0B8A5F]">S/ 45</p>
-                <p className="text-sm text-gray-600">Combo Selva</p>
+
+            {/* Floating Trust Badge */}
+            <div className="absolute -bottom-3 -left-3 bg-white rounded-xl p-3 shadow-xl hidden lg:block">
+              <div className="flex items-center space-x-2">
+                <div className="w-10 h-10 bg-[#0B8A5F] rounded-full flex items-center justify-center">
+                  <Check className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-[#5C3A21]">Envío Gratis</p>
+                  <p className="text-xs text-gray-600">Compras +S/50</p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-      
-      {/* Scroll Indicator */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
-        <div className="w-6 h-10 border-2 border-white/50 rounded-full flex justify-center">
-          <div className="w-1 h-3 bg-white/70 rounded-full mt-2 animate-bounce"></div>
         </div>
       </div>
     </section>
