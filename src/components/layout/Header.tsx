@@ -43,7 +43,7 @@ export function Header() {
               <span className="text-white font-bold text-sm">AC</span>
             </div>
             <h1 className="text-xl font-bold bg-gradient-to-r from-[#0B8A5F] to-[#F48C42] bg-clip-text text-transparent">
-              Amazonía Crujiente
+              HenrySnacks
             </h1>
           </Link>
           

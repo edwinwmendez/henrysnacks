@@ -225,7 +225,7 @@ export function SettingsPage() {
                 type="email"
                 value={contactEmail}
                 onChange={(e) => setContactEmail(e.target.value)}
-                placeholder="contacto@amazoniacrujiente.pe"
+                placeholder="contacto@henrysnacks.pe"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0B8A5F] focus:border-transparent"
               />
             </div>

@@ -104,7 +104,7 @@ const mockUsers: User[] = [
   {
     id: '2',
     name: 'Admin Usuario',
-    email: 'admin@amazoniacrujiente.pe',
+    email: 'admin@henrysnacks.pe',
     phone: '+51 999888777',
     role: 'admin',
     createdAt: '2024-01-01T00:00:00Z'

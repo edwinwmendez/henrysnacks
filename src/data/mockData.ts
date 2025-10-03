@@ -413,7 +413,7 @@ export const mockUsers = [
   {
     id: '2',
     name: 'Admin Usuario',
-    email: 'admin@amazoniacrujiente.pe',
+    email: 'admin@henrysnacks.pe',
     phone: '+51 999888777',
     role: 'admin' as const,
     createdAt: '2024-01-01T00:00:00Z',
@@ -483,7 +483,7 @@ export const mockUsers = [
   {
     id: '9',
     name: 'Delivery Rider 1',
-    email: 'rider1@amazoniacrujiente.pe',
+    email: 'rider1@henrysnacks.pe',
     phone: '+51 932109876',
     role: 'rider' as const,
     createdAt: '2024-01-03T07:00:00Z',
@@ -493,7 +493,7 @@ export const mockUsers = [
   {
     id: '10',
     name: 'Delivery Rider 2',
-    email: 'rider2@amazoniacrujiente.pe',
+    email: 'rider2@henrysnacks.pe',
     phone: '+51 921098765',
     role: 'rider' as const,
     createdAt: '2024-01-04T07:00:00Z',

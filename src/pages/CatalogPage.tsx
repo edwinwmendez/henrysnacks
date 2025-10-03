@@ -62,7 +62,7 @@ export function CatalogPage() {
           {/* Header */}
           <div className="mb-8">
             <h1 className="text-4xl md:text-5xl font-bold text-[#5C3A21] mb-4">
-              Tienda Amazonía Crujiente
+              Tienda HenrySnacks
             </h1>
             <p className="text-xl text-gray-600">
               Descubre todos nuestros productos amazónicos

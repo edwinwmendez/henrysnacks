@@ -11,7 +11,7 @@ export function Footer() {
               <div className="w-8 h-8 bg-gradient-to-br from-[#0B8A5F] to-[#F3C64B] rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-sm">AC</span>
               </div>
-              <h2 className="text-lg font-bold">Amazonía Crujiente</h2>
+              <h2 className="text-lg font-bold">HenrySnacks</h2>
             </div>
             <p className="text-[#FBFAF7]/80 text-sm leading-relaxed">
               Sabores auténticos de la Amazonía peruana, preparados con amor y tradición ancestral.
@@ -47,7 +47,7 @@ export function Footer() {
               </li>
               <li className="flex items-center space-x-2 text-[#FBFAF7]/80">
                 <Mail className="w-4 h-4" />
-                <span>pedidos@amazoniacrujiente.pe</span>
+                <span>pedidos@henrysnacks.pe</span>
               </li>
               <li className="flex items-start space-x-2 text-[#FBFAF7]/80">
                 <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" />
@@ -66,7 +66,7 @@ export function Footer() {
         </div>
         
         <div className="border-t border-[#FBFAF7]/20 mt-8 pt-8 text-center text-sm text-[#FBFAF7]/70">
-          <p>&copy; 2024 Amazonía Crujiente. Todos los derechos reservados. Con respeto y gratitud a nuestros pueblos amazónicos.</p>
+          <p>&copy; 2024 HenrySnacks. Todos los derechos reservados. Con respeto y gratitud a nuestros pueblos amazónicos.</p>
         </div>
       </div>
     </footer>

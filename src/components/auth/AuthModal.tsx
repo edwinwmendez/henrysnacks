@@ -99,7 +99,7 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login' }: AuthModalP
               <h3 className="font-medium text-[#5C3A21] mb-2">Credenciales de prueba:</h3>
               <div className="text-sm text-gray-600 space-y-1">
                 <p><strong>Cliente:</strong> maria@example.com</p>
-                <p><strong>Admin:</strong> admin@amazoniacrujiente.pe</p>
+                <p><strong>Admin:</strong> admin@henrysnacks.pe</p>
                 <p><strong>Contraseña:</strong> cualquier texto (mín. 6 caracteres)</p>
               </div>
             </div>
