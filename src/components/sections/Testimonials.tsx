@@ -4,7 +4,7 @@ export function Testimonials() {
   const testimonials = [
     {
       name: "Carmen Flores",
-      location: "San Miguel",
+      location: "Centro ciudad",
       rating: 5,
       text: "Los chifles más ricos que he probado en Lima. El sabor me transporta a mi infancia en la selva. ¡Excelente calidad y entrega súper rápida!",
       avatar: "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?w=100&h=100&fit=crop&crop=face"
@@ -18,7 +18,7 @@ export function Testimonials() {
     },
     {
       name: "Ana Lucía Torres",
-      location: "Pueblo Libre",
+      location: "Barrio la Loma",
       rating: 5,
       text: "Me encanta que respeten las tradiciones culinarias amazónicas. Además de delicioso, es un producto con historia y cultura. ¡Recomendadísimo!",
       avatar: "https://images.pexels.com/photos/733872/pexels-photo-733872.jpeg?w=100&h=100&fit=crop&crop=face"

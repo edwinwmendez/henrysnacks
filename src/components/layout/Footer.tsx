@@ -60,7 +60,7 @@ export function Footer() {
           <div>
             <h3 className="font-semibold mb-4 text-[#F3C64B]">Cultura Amazónica</h3>
             <p className="text-[#FBFAF7]/80 text-sm leading-relaxed">
-              Honramos las tradiciones culinarias de las comunidades Shipibo, Ashaninka y otros pueblos originarios de nuestra Amazonía.
+              Honramos las tradiciones culinarias de las comunidades Ashaninka, Shipibo y otros pueblos originarios de nuestra Amazonía.
             </p>
           </div>
         </div>

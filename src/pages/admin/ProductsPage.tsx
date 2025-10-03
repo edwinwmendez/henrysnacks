@@ -2,46 +2,22 @@ import { useState, useEffect } from 'react';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { Plus, Search, CreditCard as Edit, Trash2, X, Save, Trash } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import { useProducts } from '../../hooks/useProducts';
 import { Product, ProductOption } from '../../types';
 import { formatPrice } from '../../lib/utils';
 import { Button } from '../../components/ui/Button';
 
 export function ProductsPage() {
-  const [products, setProducts] = useState<Product[]>([]);
+  const { products, loading, refresh } = useProducts();
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    loadProducts();
-  }, []);
-
-  useEffect(() => {
     filterProducts();
   }, [products, searchTerm, categoryFilter]);
-
-  const loadProducts = async () => {
-    try {
-      setLoading(true);
-
-      // TODO: Cuando la base de datos esté lista, usar:
-      // const { data, error } = await supabase
-      //   .from('products')
-      //   .select('*')
-      //   .order('created_at', { ascending: false });
-
-      // Por ahora, usar datos mock
-      const { mockProducts } = await import('../../data/mockData');
-      setProducts(mockProducts);
-    } catch (error) {
-      console.error('Error loading products:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const filterProducts = () => {
     let filtered = [...products];
@@ -108,7 +84,7 @@ export function ProductsPage() {
         if (error) throw error;
       }
 
-      await loadProducts();
+      refresh();
       setShowModal(false);
       setEditingProduct(null);
     } catch (error) {
@@ -127,7 +103,7 @@ export function ProductsPage() {
         .eq('id', productId);
 
       if (error) throw error;
-      await loadProducts();
+      refresh();
     } catch (error) {
       console.error('Error deleting product:', error);
       alert('Error al eliminar el producto');

@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { Package, Plus, Users } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { formatPrice } from '../../lib/utils';
-import { mockProducts } from '../../data/mockData';
+import { useProducts } from '../../hooks/useProducts';
 import { useCart } from '../../contexts/CartContext';
 import { Product } from '../../types';
 
@@ -84,7 +84,8 @@ function ComboCard({ product, onAddToCart }: ComboCardProps) {
 
 export function Combos() {
   const { addToCart } = useCart();
-  const combos = mockProducts.filter(product => product.category === 'combo');
+  const { getProductsByCategory } = useProducts();
+  const combos = getProductsByCategory('combo');
 
   const handleAddToCart = (product: Product) => {
     const defaultOptions: Record<string, string> = {};

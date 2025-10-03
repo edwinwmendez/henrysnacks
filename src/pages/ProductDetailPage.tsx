@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
+import { useProducts } from '../hooks/useProducts';
 import { Header } from '../components/layout/Header';
 import { Footer } from '../components/layout/Footer';
 import { CartDrawer } from '../components/cart/CartDrawer';
@@ -21,8 +22,8 @@ import {
 export function ProductDetailPage() {
   const { slug } = useParams<{ slug: string }>();
   const { addToCart } = useCart();
+  const { getProductBySlug, getProductsByCategory, loading: productsLoading } = useProducts();
   const [product, setProduct] = useState<Product | null>(null);
-  const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
   const [quantity, setQuantity] = useState(1);
@@ -33,7 +34,7 @@ export function ProductDetailPage() {
 
   useEffect(() => {
     loadProduct();
-  }, [slug]);
+  }, [slug, productsLoading]);
 
   useEffect(() => {
     if (product) {
@@ -41,32 +42,28 @@ export function ProductDetailPage() {
     }
   }, [product, selectedOptions]);
 
-  const loadProduct = async () => {
-    try {
-      setLoading(true);
-      const mockProducts = (await import('../data/mockData')).mockProducts;
-      const foundProduct = mockProducts.find(p => p.slug === slug);
+  const loadProduct = () => {
+    if (productsLoading) return;
 
-      if (foundProduct) {
-        setProduct(foundProduct);
-        const defaultOptions: Record<string, string> = {};
-        foundProduct.options.forEach(option => {
-          if (option.options.length > 0) {
-            defaultOptions[option.id] = option.options[0].id;
-          }
-        });
-        setSelectedOptions(defaultOptions);
+    const foundProduct = getProductBySlug(slug || '');
 
-        // Cargar productos relacionados (misma categoría, excluyendo el actual)
-        const related = mockProducts
-          .filter(p => p.category === foundProduct.category && p.id !== foundProduct.id)
-          .slice(0, 4);
-        setRelatedProducts(related);
-      }
-    } catch (error) {
-      console.error('Error loading product:', error);
-    } finally {
-      setLoading(false);
+    if (foundProduct) {
+      setProduct(foundProduct);
+      const defaultOptions: Record<string, string> = {};
+      foundProduct.options.forEach(option => {
+        if (option.options.length > 0) {
+          defaultOptions[option.id] = option.options[0].id;
+        }
+      });
+      setSelectedOptions(defaultOptions);
+
+      // Cargar productos relacionados (misma categoría, excluyendo el actual)
+      const related = getProductsByCategory(foundProduct.category)
+        .filter(p => p.id !== foundProduct.id)
+        .slice(0, 4);
+      setRelatedProducts(related);
+    } else {
+      setProduct(null);
     }
   };
 
@@ -104,7 +101,7 @@ export function ProductDetailPage() {
   const incrementQuantity = () => setQuantity(q => q + 1);
   const decrementQuantity = () => setQuantity(q => Math.max(1, q - 1));
 
-  if (loading) {
+  if (productsLoading) {
     return (
       <div className="min-h-screen bg-white">
         <Header />

@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { Star, Plus, Leaf } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { formatPrice } from '../../lib/utils';
-import { mockProducts } from '../../data/mockData';
+import { useProducts } from '../../hooks/useProducts';
 import { useCart } from '../../contexts/CartContext';
 import { Product } from '../../types';
 
@@ -102,7 +102,8 @@ function ProductCard({ product, onAddToCart }: ProductCardProps) {
 
 export function FeaturedProducts() {
   const { addToCart } = useCart();
-  const featuredProducts = mockProducts.filter(product => product.featured);
+  const { getFeaturedProducts } = useProducts();
+  const featuredProducts = getFeaturedProducts();
   
   const handleAddToCart = (product: Product) => {
     // Add with default options for quick add

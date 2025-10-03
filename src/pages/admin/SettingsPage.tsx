@@ -29,9 +29,9 @@ export function SettingsPage() {
   const [instagramUrl, setInstagramUrl] = useState('');
   const [whatsappNumber, setWhatsappNumber] = useState('');
   const [districts, setDistricts] = useState<District[]>([
-    { name: 'San Miguel', deliveryFee: 5, available: true },
-    { name: 'Magdalena', deliveryFee: 5, available: true },
-    { name: 'Pueblo Libre', deliveryFee: 6, available: true },
+    { name: 'Centro ciudad', deliveryFee: 5, available: true },
+    { name: 'AA.HH. 8 de mayo', deliveryFee: 5, available: true },
+    { name: 'Barrio la Loma', deliveryFee: 6, available: true },
   ]);
   const [openingHours, setOpeningHours] = useState('');
   const [minOrderAmount, setMinOrderAmount] = useState(15);

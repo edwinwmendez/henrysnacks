@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { Plus, Search, CreditCard as Edit, Trash2, X, Save, Package } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
-import { Product } from '../../types';
+import { useProducts } from '../../hooks/useProducts';
 import { formatPrice } from '../../lib/utils';
 import { Button } from '../../components/ui/Button';
 
@@ -21,58 +21,48 @@ interface Combo {
 }
 
 export function CombosPage() {
+  const { products, getProductsByCategory, loading, refresh } = useProducts();
   const [combos, setCombos] = useState<Combo[]>([]);
-  const [products, setProducts] = useState<Product[]>([]);
   const [filteredCombos, setFilteredCombos] = useState<Combo[]>([]);
-  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [editingCombo, setEditingCombo] = useState<Combo | null>(null);
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    loadData();
-  }, []);
+    loadCombos();
+  }, [loading, products]);
 
   useEffect(() => {
     filterCombos();
   }, [combos, searchTerm]);
 
-  const loadData = async () => {
-    try {
-      setLoading(true);
+  const loadCombos = () => {
+    if (loading) return;
 
-      // TODO: Cuando la base de datos esté lista, usar:
-      // const [combosRes, productsRes] = await Promise.all([
-      //   supabase.from('combos').select('*').order('created_at', { ascending: false }),
-      //   supabase.from('products').select('*')
-      // ]);
+    // TODO: Cuando la base de datos esté lista, usar:
+    // const { data, error } = await supabase
+    //   .from('combos')
+    //   .select('*')
+    //   .order('created_at', { ascending: false });
 
-      // Por ahora, usar datos mock
-      const { mockProducts } = await import('../../data/mockData');
-      const combosFromMock = mockProducts.filter(p => p.category === 'combo');
+    const combosFromMock = getProductsByCategory('combo');
 
-      // Convertir los productos combo al formato Combo
-      const combosData: Combo[] = combosFromMock.map(p => ({
-        id: p.id,
-        name: p.name,
-        slug: p.slug,
-        description: p.description,
-        price: p.price,
-        discount_percentage: 0,
-        product_ids: [],
-        images: p.images,
-        active: p.available,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      }));
+    // Convertir los productos combo al formato Combo
+    const combosData: Combo[] = combosFromMock.map(p => ({
+      id: p.id,
+      name: p.name,
+      slug: p.slug,
+      description: p.description,
+      price: p.price,
+      discount_percentage: 0,
+      product_ids: [],
+      images: p.images,
+      active: p.available,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    }));
 
-      setCombos(combosData);
-      setProducts(mockProducts);
-    } catch (error) {
-      console.error('Error loading data:', error);
-    } finally {
-      setLoading(false);
-    }
+    setCombos(combosData);
   };
 
   const filterCombos = () => {
@@ -134,7 +124,7 @@ export function CombosPage() {
         if (error) throw error;
       }
 
-      await loadData();
+      refresh();
       setShowModal(false);
       setEditingCombo(null);
     } catch (error) {
@@ -153,7 +143,7 @@ export function CombosPage() {
         .eq('id', comboId);
 
       if (error) throw error;
-      await loadData();
+      refresh();
     } catch (error) {
       console.error('Error deleting combo:', error);
       alert('Error al eliminar el combo');

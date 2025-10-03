@@ -3,19 +3,21 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Leaf, Star, ShoppingCart, Check } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { useCart } from '../../contexts/CartContext';
-import { mockProducts } from '../../data/mockData';
+import { useProducts } from '../../hooks/useProducts';
 
 export function Hero() {
   const { addToCart } = useCart();
+  const { products } = useProducts();
   const [selectedSize, setSelectedSize] = useState('medium');
   const [selectedProtein, setSelectedProtein] = useState('mixto');
   const [isAdding, setIsAdding] = useState(false);
 
   // Producto destacado: Combo Selva (el más vendido)
-  const featuredProduct = mockProducts.find(p => p.id === '5') || mockProducts[4];
+  const featuredProduct = products.find(p => p.id === '5') || products[4];
 
   // Calcular precio dinámico según opciones seleccionadas
   const calculatePrice = () => {
+    if (!featuredProduct) return 0;
     let price = featuredProduct.basePrice;
 
     const proteinOption = featuredProduct.options?.find(opt => opt.id === 'protein');
@@ -30,6 +32,7 @@ export function Hero() {
   };
 
   const handleAddToCart = () => {
+    if (!featuredProduct) return;
     setIsAdding(true);
     const selectedOptions = {
       protein: selectedProtein
@@ -40,6 +43,8 @@ export function Hero() {
       setIsAdding(false);
     }, 2000);
   };
+
+  if (!featuredProduct) return null;
 
   return (
     <section className="relative bg-gradient-to-br from-[#0B8A5F] via-[#0B8A5F] to-[#074d3a] overflow-hidden">

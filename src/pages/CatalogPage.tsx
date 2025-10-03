@@ -5,9 +5,9 @@ import { Footer } from '../components/layout/Footer';
 import { CartDrawer } from '../components/cart/CartDrawer';
 import { Button } from '../components/ui/Button';
 import { Search, SlidersHorizontal, X, Package, Star, Plus } from 'lucide-react';
-import { mockProducts } from '../data/mockData';
 import { formatPrice } from '../lib/utils';
 import { useCart } from '../contexts/CartContext';
+import { useProducts } from '../hooks/useProducts';
 import { Product } from '../types';
 
 const categories = [
@@ -21,12 +21,13 @@ const categories = [
 
 export function CatalogPage() {
   const { addToCart } = useCart();
+  const { products } = useProducts();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [showFilters, setShowFilters] = useState(false);
 
   const filteredProducts = useMemo(() => {
-    let filtered = [...mockProducts];
+    let filtered = [...products];
 
     if (selectedCategory !== 'all') {
       filtered = filtered.filter(p => p.category === selectedCategory);
@@ -42,7 +43,7 @@ export function CatalogPage() {
     }
 
     return filtered;
-  }, [searchTerm, selectedCategory]);
+  }, [searchTerm, selectedCategory, products]);
 
   const handleAddToCart = (product: Product) => {
     const defaultOptions: Record<string, string> = {};

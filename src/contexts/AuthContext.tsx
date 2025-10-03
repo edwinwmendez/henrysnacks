@@ -87,7 +87,7 @@ function authReducer(state: AuthState, action: AuthAction): AuthState {
 const initialState: AuthState = {
   user: null,
   isAuthenticated: false,
-  isLoading: false,
+  isLoading: true, // Inicia en true para verificar localStorage
   error: null
 };
 
@@ -123,7 +123,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         dispatch({ type: 'LOGIN_SUCCESS', payload: user });
       } catch (error) {
         localStorage.removeItem('auth_user');
+        dispatch({ type: 'LOGOUT' });
       }
+    } else {
+      // No hay usuario guardado, terminar carga
+      dispatch({ type: 'LOGOUT' });
     }
   }, []);
 
