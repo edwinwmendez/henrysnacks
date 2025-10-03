@@ -14,6 +14,21 @@ export function Hero() {
   // Producto destacado: Combo Selva (el más vendido)
   const featuredProduct = mockProducts.find(p => p.id === '5') || mockProducts[4];
 
+  // Calcular precio dinámico según opciones seleccionadas
+  const calculatePrice = () => {
+    let price = featuredProduct.basePrice;
+
+    const proteinOption = featuredProduct.options?.find(opt => opt.id === 'protein');
+    if (proteinOption && selectedProtein) {
+      const choice = proteinOption.options.find(opt => opt.id === selectedProtein);
+      if (choice) {
+        price += choice.priceDelta;
+      }
+    }
+
+    return price;
+  };
+
   const handleAddToCart = () => {
     setIsAdding(true);
     const selectedOptions = {
@@ -162,7 +177,7 @@ export function Hero() {
                   <div>
                     <p className="text-xs text-gray-500">Precio</p>
                     <p className="text-2xl font-bold text-[#0B8A5F]">
-                      S/ {featuredProduct.price}
+                      S/ {calculatePrice()}
                     </p>
                   </div>
                   <Button

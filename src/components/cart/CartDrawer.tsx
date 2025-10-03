@@ -141,7 +141,7 @@ export function CartDrawer() {
                   </div>
                 </div>
                 
-                <div className="space-y-3">
+                <div className="flex flex-col gap-3">
                   <Button size="lg" className="w-full">
                     Proceder al Checkout
                   </Button>

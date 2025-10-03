@@ -155,7 +155,7 @@ export const mockProducts: Product[] = [
     category: 'combo',
     description: 'La experiencia completa: chifles verdes, yuca frita, camote y pollo deshilachado. Perfecto para 2-3 personas.',
     price: 25,
-    basePrice: 45,
+    basePrice: 25,
     images: [
       'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg',
       'https://images.pexels.com/photos/4516622/pexels-photo-4516622.jpeg'
