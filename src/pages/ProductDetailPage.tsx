@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import { Header } from '../components/layout/Header';
 import { Footer } from '../components/layout/Footer';
+import { CartDrawer } from '../components/cart/CartDrawer';
 import { Button } from '../components/ui/Button';
 import { formatPrice } from '../lib/utils';
 import { Product } from '../types';
@@ -27,6 +28,8 @@ export function ProductDetailPage() {
   const [quantity, setQuantity] = useState(1);
   const [currentPrice, setCurrentPrice] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [isAdding, setIsAdding] = useState(false);
+  const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
 
   useEffect(() => {
     loadProduct();
@@ -53,6 +56,12 @@ export function ProductDetailPage() {
           }
         });
         setSelectedOptions(defaultOptions);
+
+        // Cargar productos relacionados (misma categoría, excluyendo el actual)
+        const related = mockProducts
+          .filter(p => p.category === foundProduct.category && p.id !== foundProduct.id)
+          .slice(0, 4);
+        setRelatedProducts(related);
       }
     } catch (error) {
       console.error('Error loading product:', error);
@@ -84,7 +93,12 @@ export function ProductDetailPage() {
 
   const handleAddToCart = () => {
     if (!product) return;
+    setIsAdding(true);
     addToCart(product, quantity, selectedOptions);
+
+    setTimeout(() => {
+      setIsAdding(false);
+    }, 2000);
   };
 
   const incrementQuantity = () => setQuantity(q => q + 1);
@@ -98,6 +112,7 @@ export function ProductDetailPage() {
           <div className="text-center text-gray-500">Cargando producto...</div>
         </div>
         <Footer />
+        <CartDrawer />
       </div>
     );
   }
@@ -113,6 +128,7 @@ export function ProductDetailPage() {
           </div>
         </div>
         <Footer />
+        <CartDrawer />
       </div>
     );
   }
@@ -305,11 +321,23 @@ export function ProductDetailPage() {
               <div className="flex space-x-3">
                 <Button
                   onClick={handleAddToCart}
+                  disabled={isAdding}
                   size="lg"
-                  className="flex-1 flex items-center justify-center space-x-2"
+                  className={`flex-1 flex items-center justify-center space-x-2 ${
+                    isAdding ? 'bg-green-500 hover:bg-green-500' : ''
+                  }`}
                 >
-                  <ShoppingCart className="w-5 h-5" />
-                  <span>Agregar al Carrito</span>
+                  {isAdding ? (
+                    <>
+                      <Check className="w-5 h-5" />
+                      <span>¡Agregado al Carrito!</span>
+                    </>
+                  ) : (
+                    <>
+                      <ShoppingCart className="w-5 h-5" />
+                      <span>Agregar al Carrito</span>
+                    </>
+                  )}
                 </Button>
 
                 <button
@@ -343,9 +371,55 @@ export function ProductDetailPage() {
             </div>
           </div>
         </div>
+
+        {/* Productos Relacionados */}
+        {relatedProducts.length > 0 && (
+          <section className="mt-20 border-t pt-12">
+            <h2 className="text-2xl md:text-3xl font-bold text-[#5C3A21] mb-8">
+              Productos Relacionados
+            </h2>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {relatedProducts.map((relatedProduct) => (
+                <Link
+                  key={relatedProduct.id}
+                  to={`/producto/${relatedProduct.slug}`}
+                  className="group bg-white rounded-2xl overflow-hidden border border-gray-200 hover:border-[#0B8A5F] hover:shadow-lg transition-all"
+                >
+                  <div className="aspect-square overflow-hidden bg-gray-100">
+                    <img
+                      src={relatedProduct.images[0]}
+                      alt={relatedProduct.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+
+                  <div className="p-4">
+                    <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">
+                      {relatedProduct.name}
+                    </h3>
+
+                    <div className="flex items-center justify-between">
+                      <span className="text-lg font-bold text-[#0B8A5F]">
+                        {formatPrice(relatedProduct.price)}
+                      </span>
+
+                      {relatedProduct.featured && (
+                        <span className="text-xs bg-[#F3C64B] text-[#5C3A21] px-2 py-1 rounded-full font-medium">
+                          Destacado
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
       </main>
 
       <Footer />
+      <CartDrawer />
     </div>
   );
 }

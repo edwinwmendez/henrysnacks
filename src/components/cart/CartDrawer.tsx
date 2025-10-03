@@ -3,25 +3,44 @@ import { X, Plus, Minus, ShoppingBag } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { formatPrice } from '../../lib/utils';
 import { useCart } from '../../contexts/CartContext';
+import { useEffect, useState } from 'react';
 
 export function CartDrawer() {
   const { state, closeCart, updateQuantity, removeFromCart } = useCart();
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  useEffect(() => {
+    if (state.isOpen) {
+      setIsAnimating(true);
+    }
+  }, [state.isOpen]);
+
+  const handleClose = () => {
+    setIsAnimating(false);
+    setTimeout(() => {
+      closeCart();
+    }, 300); // Duración de la animación
+  };
 
   if (!state.isOpen) return null;
-  
+
   const deliveryFee = state.items.length > 0 ? 5 : 0;
   const total = state.total + deliveryFee;
-  
+
   return (
     <div className="fixed inset-0 z-50 overflow-hidden">
       {/* Backdrop */}
-      <div 
-        className="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm transition-opacity"
-        onClick={closeCart}
+      <div
+        className={`absolute inset-0 bg-black backdrop-blur-sm transition-all duration-300 ${
+          isAnimating ? 'bg-opacity-50' : 'bg-opacity-0'
+        }`}
+        onClick={handleClose}
       />
-      
+
       {/* Drawer */}
-      <div className="absolute right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl transform transition-transform">
+      <div className={`absolute right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl transform transition-all duration-300 ease-out ${
+        isAnimating ? 'translate-x-0' : 'translate-x-full'
+      }`}>
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b">
@@ -30,7 +49,7 @@ export function CartDrawer() {
               Tu Carrito
             </h2>
             <button
-              onClick={closeCart}
+              onClick={handleClose}
               className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
             >
               <X className="w-5 h-5" />
@@ -46,7 +65,7 @@ export function CartDrawer() {
                 </div>
                 <h3 className="text-lg font-medium text-gray-900">Carrito vacío</h3>
                 <p className="text-gray-500">¡Agrega algunos productos deliciosos!</p>
-                <Link to="/catalogo" onClick={closeCart}>
+                <Link to="/catalogo" onClick={handleClose}>
                   <Button className="mt-4">
                     Ver Tienda
                   </Button>
@@ -146,7 +165,7 @@ export function CartDrawer() {
                     Proceder al Checkout
                   </Button>
 
-                  <Link to="/catalogo" onClick={closeCart}>
+                  <Link to="/catalogo" onClick={handleClose}>
                     <Button variant="outline" size="lg" className="w-full">
                       Seguir Comprando
                     </Button>

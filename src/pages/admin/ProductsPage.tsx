@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { AdminLayout } from '../../components/admin/AdminLayout';
-import { Plus, Search, CreditCard as Edit, Trash2, X, Save } from 'lucide-react';
+import { Plus, Search, CreditCard as Edit, Trash2, X, Save, Trash } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
-import { Product } from '../../types';
+import { Product, ProductOption } from '../../types';
 import { formatPrice } from '../../lib/utils';
 import { Button } from '../../components/ui/Button';
 
@@ -331,7 +331,20 @@ export function ProductsPage() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Precio
+                    Precio Base
+                  </label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={editingProduct.basePrice}
+                    onChange={(e) => setEditingProduct({ ...editingProduct, basePrice: parseFloat(e.target.value) })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0B8A5F] focus:border-transparent"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Precio Display
                   </label>
                   <input
                     type="number"
@@ -355,7 +368,209 @@ export function ProductsPage() {
                 />
               </div>
 
-              <div className="flex items-center space-x-6">
+              {/* Imágenes */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Imágenes (URLs separadas por coma)
+                </label>
+                <textarea
+                  value={editingProduct.images.join(', ')}
+                  onChange={(e) => setEditingProduct({
+                    ...editingProduct,
+                    images: e.target.value.split(',').map(url => url.trim()).filter(url => url)
+                  })}
+                  rows={2}
+                  placeholder="https://example.com/image1.jpg, https://example.com/image2.jpg"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0B8A5F] focus:border-transparent"
+                />
+              </div>
+
+              {/* Tags */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Tags (separados por coma)
+                </label>
+                <input
+                  type="text"
+                  value={editingProduct.tags.join(', ')}
+                  onChange={(e) => setEditingProduct({
+                    ...editingProduct,
+                    tags: e.target.value.split(',').map(tag => tag.trim()).filter(tag => tag)
+                  })}
+                  placeholder="tradicional, crujiente, sin gluten"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0B8A5F] focus:border-transparent"
+                />
+              </div>
+
+              {/* Ingredientes */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Ingredientes (separados por coma)
+                </label>
+                <textarea
+                  value={editingProduct.ingredients.join(', ')}
+                  onChange={(e) => setEditingProduct({
+                    ...editingProduct,
+                    ingredients: e.target.value.split(',').map(ing => ing.trim()).filter(ing => ing)
+                  })}
+                  rows={2}
+                  placeholder="Plátano verde, Aceite vegetal, Sal marina"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0B8A5F] focus:border-transparent"
+                />
+              </div>
+
+              {/* Opciones del Producto */}
+              <div className="border-t pt-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h4 className="text-lg font-semibold text-gray-900">Opciones del Producto</h4>
+                  <Button
+                    onClick={() => {
+                      const newOption: ProductOption = {
+                        id: `option-${Date.now()}`,
+                        name: 'Nueva Opción',
+                        type: 'size',
+                        options: []
+                      };
+                      setEditingProduct({
+                        ...editingProduct,
+                        options: [...editingProduct.options, newOption]
+                      });
+                    }}
+                    variant="outline"
+                    className="text-sm"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Agregar Opción
+                  </Button>
+                </div>
+
+                <div className="space-y-6">
+                  {editingProduct.options.map((option, optionIndex) => (
+                    <div key={option.id} className="bg-gray-50 rounded-lg p-4 space-y-4">
+                      <div className="flex items-start justify-between">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 flex-1">
+                          <input
+                            type="text"
+                            value={option.id}
+                            onChange={(e) => {
+                              const newOptions = [...editingProduct.options];
+                              newOptions[optionIndex].id = e.target.value;
+                              setEditingProduct({ ...editingProduct, options: newOptions });
+                            }}
+                            placeholder="ID (ej: size, protein)"
+                            className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                          />
+                          <input
+                            type="text"
+                            value={option.name}
+                            onChange={(e) => {
+                              const newOptions = [...editingProduct.options];
+                              newOptions[optionIndex].name = e.target.value;
+                              setEditingProduct({ ...editingProduct, options: newOptions });
+                            }}
+                            placeholder="Nombre (ej: Tamaño)"
+                            className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                          />
+                          <select
+                            value={option.type}
+                            onChange={(e) => {
+                              const newOptions = [...editingProduct.options];
+                              newOptions[optionIndex].type = e.target.value as any;
+                              setEditingProduct({ ...editingProduct, options: newOptions });
+                            }}
+                            className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                          >
+                            <option value="size">Tamaño</option>
+                            <option value="protein">Proteína</option>
+                            <option value="topping">Topping</option>
+                          </select>
+                        </div>
+                        <button
+                          onClick={() => {
+                            const newOptions = editingProduct.options.filter((_, i) => i !== optionIndex);
+                            setEditingProduct({ ...editingProduct, options: newOptions });
+                          }}
+                          className="ml-3 text-red-600 hover:text-red-800"
+                        >
+                          <Trash className="w-5 h-5" />
+                        </button>
+                      </div>
+
+                      {/* Sub-opciones */}
+                      <div className="ml-4 space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium text-gray-700">Variantes</span>
+                          <button
+                            onClick={() => {
+                              const newOptions = [...editingProduct.options];
+                              newOptions[optionIndex].options.push({
+                                id: `choice-${Date.now()}`,
+                                name: 'Nueva Variante',
+                                priceDelta: 0
+                              });
+                              setEditingProduct({ ...editingProduct, options: newOptions });
+                            }}
+                            className="text-sm text-[#0B8A5F] hover:text-[#0B8A5F]/80"
+                          >
+                            + Agregar Variante
+                          </button>
+                        </div>
+
+                        {option.options.map((choice, choiceIndex) => (
+                          <div key={choice.id} className="flex items-center space-x-2">
+                            <input
+                              type="text"
+                              value={choice.id}
+                              onChange={(e) => {
+                                const newOptions = [...editingProduct.options];
+                                newOptions[optionIndex].options[choiceIndex].id = e.target.value;
+                                setEditingProduct({ ...editingProduct, options: newOptions });
+                              }}
+                              placeholder="ID"
+                              className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm"
+                            />
+                            <input
+                              type="text"
+                              value={choice.name}
+                              onChange={(e) => {
+                                const newOptions = [...editingProduct.options];
+                                newOptions[optionIndex].options[choiceIndex].name = e.target.value;
+                                setEditingProduct({ ...editingProduct, options: newOptions });
+                              }}
+                              placeholder="Nombre"
+                              className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm"
+                            />
+                            <input
+                              type="number"
+                              step="0.01"
+                              value={choice.priceDelta}
+                              onChange={(e) => {
+                                const newOptions = [...editingProduct.options];
+                                newOptions[optionIndex].options[choiceIndex].priceDelta = parseFloat(e.target.value);
+                                setEditingProduct({ ...editingProduct, options: newOptions });
+                              }}
+                              placeholder="Precio"
+                              className="w-24 px-2 py-1 border border-gray-300 rounded text-sm"
+                            />
+                            <button
+                              onClick={() => {
+                                const newOptions = [...editingProduct.options];
+                                newOptions[optionIndex].options = newOptions[optionIndex].options.filter((_, i) => i !== choiceIndex);
+                                setEditingProduct({ ...editingProduct, options: newOptions });
+                              }}
+                              className="text-red-600 hover:text-red-800"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-6 pt-6 border-t">
                 <label className="flex items-center space-x-2">
                   <input
                     type="checkbox"
