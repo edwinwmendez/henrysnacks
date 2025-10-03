@@ -51,7 +51,7 @@ export function Footer() {
               </li>
               <li className="flex items-start space-x-2 text-[#FBFAF7]/80">
                 <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                <span>Lima Metropolitana<br />Delivery en 10 distritos</span>
+                <span>Atalaya, Ucayali<br />Delivery en toda la ciudad</span>
               </li>
             </ul>
           </div>
