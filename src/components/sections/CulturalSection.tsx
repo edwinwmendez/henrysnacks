@@ -5,19 +5,19 @@ export function CulturalSection() {
     {
       title: "Tradición Shipibo",
       description: "Los patrones geométricos que inspiran nuestro diseño provienen del arte textil shipibo, reconocido por su precisión y belleza.",
-      image: "https://images.pexels.com/photos/4321831/pexels-photo-4321831.jpeg",
+      image: "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg",
       community: "Shipibo-Konibo"
     },
     {
       title: "Sabiduría Ashaninka",
       description: "Las técnicas de conservación y preparación de alimentos que utilizamos han sido transmitidas por generaciones ashaninka.",
-      image: "https://images.pexels.com/photos/4916559/pexels-photo-4916559.jpeg",
+      image: "https://images.pexels.com/photos/1633572/pexels-photo-1633572.jpeg",
       community: "Ashaninka"
     },
     {
       title: "Ingredientes Ancestrales",
       description: "Cada plátano, cada yuca, cada camote que utilizamos proviene de cultivos tradicionales de la Amazonía peruana.",
-      image: "https://images.pexels.com/photos/5840219/pexels-photo-5840219.jpeg",
+      image: "https://images.pexels.com/photos/2872755/pexels-photo-2872755.jpeg",
       community: "Múltiples etnias"
     }
   ];
@@ -121,9 +121,9 @@ export function CulturalSection() {
             
             <div className="relative">
               <div className="aspect-square rounded-2xl overflow-hidden shadow-xl">
-                <img 
-                  src="https://images.pexels.com/photos/4321831/pexels-photo-4321831.jpeg" 
-                  alt="Comunidad amazónica" 
+                <img
+                  src="https://images.pexels.com/photos/4198951/pexels-photo-4198951.jpeg"
+                  alt="Comunidad amazónica"
                   className="w-full h-full object-cover"
                 />
               </div>

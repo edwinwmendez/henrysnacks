@@ -122,12 +122,12 @@ export function AdminLayout({ children, currentPage }: AdminLayoutProps) {
           </h2>
 
           <div className="flex items-center space-x-4">
-            <Link
-              to="/"
+            <a
+              href="/"
               className="text-sm text-gray-600 hover:text-[#0B8A5F] transition-colors"
             >
               Ver sitio web
-            </Link>
+            </a>
           </div>
         </header>
 

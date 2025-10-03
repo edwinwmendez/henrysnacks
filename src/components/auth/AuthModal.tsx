@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { X, Mail, Lock, User, Phone, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { useAuth } from '../../contexts/AuthContext';
@@ -22,16 +21,13 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login' }: AuthModalP
   });
 
   const { state, login, register, clearError } = useAuth();
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (state.isAuthenticated) {
       onClose();
 
-      // Si es admin, redirigir al panel de administración
-      if (state.user?.role === 'admin') {
-        navigate('/admin');
-      }
+      // El admin puede acceder al panel desde el botón "Panel Admin" en el header
+      // No redirigir automáticamente
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.isAuthenticated]);

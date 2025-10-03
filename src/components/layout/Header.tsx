@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { ShoppingCart, Menu, Search, User, LayoutDashboard } from 'lucide-react';
+import { ShoppingCart, Menu, User } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { useCart } from '../../contexts/CartContext';
 import { useAuth } from '../../contexts/AuthContext';
@@ -85,21 +85,6 @@ export function Header() {
           
           {/* Actions */}
           <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="sm" className="hidden sm:flex">
-              <Search className="w-4 h-4 mr-2" />
-              Buscar
-            </Button>
-
-            {/* Admin Panel Link - Only visible for admin users */}
-            {authState.isAuthenticated && authState.user?.role === 'admin' && (
-              <Link to="/admin">
-                <Button variant="ghost" size="sm" className="hidden sm:flex bg-[#0B8A5F]/10 text-[#0B8A5F] hover:bg-[#0B8A5F]/20">
-                  <LayoutDashboard className="w-4 h-4 mr-2" />
-                  Panel Admin
-                </Button>
-              </Link>
-            )}
-
             {authState.isAuthenticated ? (
               <UserMenu />
             ) : (
@@ -169,21 +154,6 @@ export function Header() {
               >
                 Nuestra Historia
               </button>
-
-              {/* Admin Link - Only for admin users */}
-              {authState.isAuthenticated && authState.user?.role === 'admin' && (
-                <>
-                  <div className="border-t border-gray-200 my-2"></div>
-                  <Link
-                    to="/admin"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-center py-3 bg-[#0B8A5F]/10 text-[#0B8A5F] rounded-lg hover:bg-[#0B8A5F]/20 transition-all font-medium"
-                  >
-                    <LayoutDashboard className="w-4 h-4 mr-2" />
-                    Panel Admin
-                  </Link>
-                </>
-              )}
 
               {/* Separator */}
               <div className="border-t border-gray-200 my-2"></div>

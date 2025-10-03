@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
-import { User, LogOut, ShoppingBag, Settings, ChevronDown } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { User, LogOut, ShoppingBag, Settings, ChevronDown, LayoutDashboard } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -60,16 +61,35 @@ export function UserMenu() {
 
           {/* Menu Items */}
           <div className="py-2">
+            {/* Admin Panel - Solo para administradores */}
+            {state.user.role === 'admin' && (
+              <>
+                <Link
+                  to="/admin"
+                  onClick={() => setIsOpen(false)}
+                  className="w-full px-4 py-2 text-left hover:bg-[#0B8A5F]/10 flex items-center space-x-3 text-[#0B8A5F] font-medium"
+                >
+                  <LayoutDashboard className="w-4 h-4" />
+                  <span>Panel de Administración</span>
+                </Link>
+                <div className="border-t border-gray-100 my-2"></div>
+              </>
+            )}
+
+            {/* Opciones comunes */}
             <button className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-3 text-gray-700">
               <User className="w-4 h-4" />
               <span>Mi Perfil</span>
             </button>
-            
-            <button className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-3 text-gray-700">
-              <ShoppingBag className="w-4 h-4" />
-              <span>Mis Pedidos</span>
-            </button>
-            
+
+            {/* Mis Pedidos - Solo para clientes */}
+            {state.user.role === 'customer' && (
+              <button className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-3 text-gray-700">
+                <ShoppingBag className="w-4 h-4" />
+                <span>Mis Pedidos</span>
+              </button>
+            )}
+
             <button className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-3 text-gray-700">
               <Settings className="w-4 h-4" />
               <span>Configuración</span>
