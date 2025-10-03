@@ -191,7 +191,7 @@ export function Hero() {
             </div>
 
             {/* Floating Trust Badge */}
-            <div className="absolute -bottom-3 -left-3 bg-white rounded-xl p-3 shadow-xl hidden lg:block">
+            <div className="absolute -top-3 -right-3 bg-white rounded-xl p-3 shadow-xl">
               <div className="flex items-center space-x-2">
                 <div className="w-10 h-10 bg-[#0B8A5F] rounded-full flex items-center justify-center">
                   <Check className="w-5 h-5 text-white" />
