@@ -9,7 +9,6 @@ import {
   Download,
   BarChart3
 } from 'lucide-react';
-import { supabase } from '../../lib/supabase';
 import { formatPrice } from '../../lib/utils';
 import { Button } from '../../components/ui/Button';
 

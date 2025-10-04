@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import { Package, Plus, Users, Tag } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { formatPrice } from '../../lib/utils';

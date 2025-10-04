@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { AdminLayout } from '../../components/admin/AdminLayout';
-import { Plus, Search, CreditCard as Edit, Trash2, X, Save, Package, Trash, Star } from 'lucide-react';
+import { Plus, Search, CreditCard as Edit, Trash2, X, Save, Package, Star } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useProducts } from '../../hooks/useProducts';
 import { useCombos } from '../../hooks/useCombos';
-import { Combo, ComboItem } from '../../types';
+import { Combo } from '../../types';
 import { formatPrice } from '../../lib/utils';
 import { Button } from '../../components/ui/Button';
 
@@ -145,6 +145,7 @@ export function CombosPage() {
   };
 
   const calculateDiscountedPrice = () => {
+    if (!editingCombo) return 0;
     const regular = calculateRegularPrice();
     return regular * (1 - editingCombo.discount_percentage / 100);
   };
