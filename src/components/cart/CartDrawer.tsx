@@ -248,11 +248,14 @@ export function CartDrawer() {
                     Proceder al Checkout
                   </Button>
 
-                  <Link to="/tienda" onClick={handleClose}>
-                    <Button variant="outline" size="lg" className="w-full">
-                      Seguir Comprando
-                    </Button>
-                  </Link>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="w-full"
+                    onClick={handleClose}
+                  >
+                    Seguir Comprando
+                  </Button>
                 </div>
 
                 <p className="text-xs text-gray-500 text-center">

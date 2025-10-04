@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Leaf, Star, ShoppingCart, Check, Package, Tag } from 'lucide-react';
+import { ArrowRight, Star, ShoppingCart, Package, Sparkles, Tag } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { useCart } from '../../contexts/CartContext';
 import { useProducts } from '../../hooks/useProducts';
@@ -130,204 +130,194 @@ export function Hero() {
   const item = mostSoldItem.item;
 
   return (
-    <section className="relative bg-gradient-to-br from-[#0B8A5F] via-[#0B8A5F] to-[#074d3a] overflow-hidden">
-      {/* Background Image */}
+    <section className="relative min-h-[90vh] flex items-center overflow-hidden bg-gradient-to-br from-[#5C3A21] via-[#5C3A21] to-[#3d2616]">
+      {/* Background with Overlay */}
       <div className="absolute inset-0">
         <img
           src="https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg"
-          alt="Background"
-          className="w-full h-full object-cover opacity-10"
+          alt="Productos amazónicos crujientes de la selva peruana"
+          className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0B8A5F]/90 via-[#0B8A5F]/85 to-[#074d3a]/90"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-[#5C3A21]/95 via-[#5C3A21]/90 to-[#5C3A21]/85"></div>
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-20"></div>
       </div>
 
-      <div className="relative container mx-auto px-4 py-8 lg:py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-center">
+      {/* Content */}
+      <div className="relative z-10 container mx-auto px-4 py-12">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center max-w-7xl mx-auto">
 
-          {/* Content Side */}
-          <div className="text-white space-y-4 lg:space-y-6">
+          {/* Left Column - Main Message */}
+          <div className="text-center lg:text-left">
             {/* Badge */}
-            <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/20">
-              <Leaf className="w-4 h-4 text-[#F3C64B]" />
-              <span className="text-sm font-medium text-[#F3C64B]">
-                Auténticos sabores de la Amazonía
-              </span>
+            <div className="inline-flex items-center bg-[#F3C64B]/20 backdrop-blur-sm text-white border border-[#F3C64B]/30 rounded-full px-5 py-2.5 mb-6">
+              <Sparkles className="w-4 h-4 mr-2 text-[#F3C64B]" />
+              <span className="text-sm font-semibold">Auténtico sabor de la Amazonía</span>
             </div>
 
-            {/* Main Headline */}
-            <div className="space-y-3">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
-                Sabores que cuentan
-                <span className="text-[#F3C64B] block mt-2">historias</span>
-              </h1>
-              <p className="text-base md:text-lg text-white/90 leading-relaxed max-w-xl">
-                Descubre la tradición culinaria amazónica en cada bocado.
-                Chifles, yuca y camote preparados con recetas ancestrales.
-              </p>
-            </div>
+            {/* Main Heading */}
+            <h1 className="font-bold text-5xl md:text-6xl lg:text-7xl text-white mb-6 leading-tight">
+              Tradición crujiente
+              <br />
+              <span className="text-[#F3C64B]">desde la selva</span>
+            </h1>
 
-            {/* Stats */}
-            <div className="grid grid-cols-3 gap-4 lg:gap-6 max-w-lg">
-              <div className="text-center">
-                <div className="flex items-center justify-center space-x-0.5 text-[#F3C64B] mb-1">
-                  <Star className="w-4 h-4 fill-current" />
-                  <Star className="w-4 h-4 fill-current" />
-                  <Star className="w-4 h-4 fill-current" />
-                  <Star className="w-4 h-4 fill-current" />
-                  <Star className="w-4 h-4 fill-current" />
-                </div>
-                <p className="text-xs text-white/70">500+ clientes</p>
-              </div>
-              <div className="text-center border-x border-white/20">
-                <p className="text-2xl font-bold text-[#F3C64B]">45min</p>
-                <p className="text-xs text-white/70">Entrega</p>
-              </div>
-              <div className="text-center">
-                <p className="text-2xl font-bold text-[#F3C64B]">100%</p>
-                <p className="text-xs text-white/70">Natural</p>
-              </div>
-            </div>
+            {/* Subtitle */}
+            <p className="text-lg md:text-xl text-white/90 mb-10 max-w-xl mx-auto lg:mx-0 leading-relaxed">
+              Chifles, yuca y camote directo del corazón de la Amazonía.
+              <span className="font-semibold text-[#F3C64B]"> 100% natural</span>, sin conservantes.
+            </p>
 
-            {/* CTA */}
-            <div className="pt-2">
-              <Link to="/tienda">
-                <Button
-                  size="lg"
-                  className="group bg-[#F3C64B] text-[#5C3A21] hover:bg-[#F3C64B]/90 text-lg px-8 py-6 rounded-xl shadow-2xl hover:shadow-[#F3C64B]/20 transition-all"
-                >
-                  Explorar Tienda
-                  <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-                </Button>
-              </Link>
-            </div>
+            {/* Single CTA */}
+            <Link to="/tienda">
+              <Button
+                size="lg"
+                className="bg-[#F3C64B] hover:bg-[#F3C64B]/90 text-[#5C3A21] text-lg px-10 py-6 rounded-xl shadow-2xl group"
+              >
+                Explorar Catálogo Completo
+                <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </Link>
           </div>
 
-          {/* Featured Item Card */}
-          <div className="relative">
-            <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
-              {/* Image */}
-              <div className="relative aspect-video overflow-hidden bg-gradient-to-br from-gray-100 to-gray-50">
-                <img
-                  src={item.images[0]}
-                  alt={item.name}
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                />
-                {/* Badge */}
-                <div className="absolute top-4 left-4 !bg-[#F48C42] !text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg flex items-center">
-                  {isCombo ? <Package className="w-4 h-4 mr-1 fill-current" /> : '🔥'}
-                  {isCombo ? 'COMBO' : 'Más Vendido'}
-                </div>
-                {isCombo && (
-                  <div className="absolute top-4 right-4 !bg-red-600 !text-white px-3 py-1 rounded-full text-sm font-bold flex items-center shadow-lg">
-                    <Tag className="w-3 h-3 mr-1 fill-current" />
-                    -{(item as Combo).discount_percentage}%
+          {/* Right Column - Featured Product */}
+          <div className="flex justify-center lg:justify-end">
+            <div className="relative max-w-md w-full">
+              {/* Best Seller Badge */}
+              <div className="absolute -top-4 -left-4 z-20">
+                <div className="!bg-[#F3C64B] !text-[#5C3A21] rounded-full p-4 shadow-xl border-4 border-white animate-pulse">
+                  <div className="text-center">
+                    <Star className="w-6 h-6 mx-auto mb-1 fill-current" />
+                    <div className="text-xs font-bold uppercase">
+                      {isCombo ? 'COMBO' : 'Más Vendido'}
+                    </div>
                   </div>
-                )}
+                </div>
               </div>
 
-              {/* Info */}
-              <div className="p-4 lg:p-6 space-y-4">
-                <div>
-                  <h3 className="text-xl lg:text-2xl font-bold text-[#5C3A21] mb-1.5">
+              {/* Product Card */}
+              <div className="bg-white rounded-2xl shadow-2xl overflow-hidden transform hover:scale-105 transition-all duration-300">
+                {/* Product Image */}
+                <div className="relative h-64 overflow-hidden">
+                  <img
+                    src={item.images[0]}
+                    alt={item.name}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#5C3A21]/50 to-transparent"></div>
+
+                  {/* Discount Badge for Combos */}
+                  {isCombo && (
+                    <div className="absolute top-3 right-3">
+                      <div className="!bg-red-600 !text-white px-3 py-1.5 rounded-full text-sm font-bold flex items-center shadow-lg">
+                        <Tag className="w-4 h-4 mr-1 fill-current" />
+                        -{(item as Combo).discount_percentage}%
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Product Info */}
+                <div className="p-6">
+                  <h3 className="font-bold text-2xl text-[#5C3A21] mb-2">
                     {item.name}
                   </h3>
-                  <p className="text-sm text-gray-600 leading-relaxed">
+
+                  <p className="text-gray-600 mb-4">
                     {item.description}
                   </p>
-                </div>
 
-                {/* Combo Items or Product Options */}
-                {isCombo ? (
-                  <div className="bg-[#0B8A5F]/5 rounded-lg p-3">
-                    <p className="text-xs font-semibold text-[#0B8A5F] mb-2">Incluye:</p>
-                    <ul className="space-y-1">
-                      {(item as Combo).items.map((comboItem, index) => (
-                        <li key={index} className="text-xs text-gray-600 flex items-center">
-                          <span className="w-1.5 h-1.5 bg-[#F3C64B] rounded-full mr-2"></span>
-                          {comboItem.quantity}x {getProductName(comboItem.product_id)}
-                        </li>
-                      ))}
-                    </ul>
+                  {/* Tags */}
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {item.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="!bg-[#0B8A5F]/10 !text-[#0B8A5F] text-xs px-3 py-1 rounded-full font-medium"
+                      >
+                        {tag}
+                      </span>
+                    ))}
                   </div>
-                ) : (
-                  (item as Product).options && (item as Product).options.length > 0 && (
-                    <div className="space-y-3">
-                      {(item as Product).options.find(opt => opt.id === 'protein') && (
-                        <div>
-                          <label className="block text-sm font-semibold text-[#5C3A21] mb-2">
-                            Acompañamiento
-                          </label>
-                          <div className="grid grid-cols-2 gap-2">
-                            {(item as Product).options
-                              .find(opt => opt.id === 'protein')
-                              ?.options.slice(0, 2).map(option => (
-                                <button
-                                  key={option.id}
-                                  onClick={() => setSelectedProtein(option.id)}
-                                  className={`px-3 py-2 rounded-lg text-xs font-medium transition-all ${
-                                    selectedProtein === option.id
-                                      ? 'bg-[#0B8A5F] text-white'
-                                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                                  }`}
-                                >
-                                  {option.name}
-                                </button>
-                              ))}
-                          </div>
-                        </div>
-                      )}
+
+                  {/* Combo Items or Product Options */}
+                  {isCombo ? (
+                    <div className="bg-[#0B8A5F]/5 rounded-lg p-3 mb-4">
+                      <p className="text-sm font-semibold text-[#0B8A5F] mb-2 flex items-center">
+                        <Package className="w-4 h-4 mr-1" />
+                        Incluye:
+                      </p>
+                      <ul className="space-y-1">
+                        {(item as Combo).items.map((comboItem, index) => (
+                          <li key={index} className="text-sm text-gray-600 flex items-center">
+                            <span className="w-1.5 h-1.5 bg-[#F3C64B] rounded-full mr-2"></span>
+                            {comboItem.quantity}x {getProductName(comboItem.product_id)}
+                          </li>
+                        ))}
+                      </ul>
                     </div>
-                  )
-                )}
+                  ) : (
+                    (item as Product).options?.find(opt => opt.id === 'protein') && (
+                      <div className="mb-4">
+                        <label className="block text-sm font-semibold text-[#5C3A21] mb-2">
+                          Acompañamiento:
+                        </label>
+                        <div className="grid grid-cols-2 gap-2">
+                          {(item as Product).options
+                            .find(opt => opt.id === 'protein')
+                            ?.options.slice(0, 2).map(option => (
+                              <button
+                                key={option.id}
+                                onClick={() => setSelectedProtein(option.id)}
+                                className={`px-3 py-2 rounded-lg text-xs font-medium transition-all ${
+                                  selectedProtein === option.id
+                                    ? '!bg-[#0B8A5F] !text-white'
+                                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                }`}
+                              >
+                                {option.name}
+                              </button>
+                            ))}
+                        </div>
+                      </div>
+                    )
+                  )}
 
-                {/* Price and Add to Cart */}
-                <div className="flex items-center justify-between pt-3 border-t border-gray-200">
-                  <div>
-                    <p className="text-xs text-gray-500">Precio</p>
-                    <p className="text-2xl font-bold text-[#0B8A5F]">
-                      {formatPrice(calculatePrice())}
-                    </p>
+                  {/* Price and Add to Cart */}
+                  <div className="flex items-center justify-between pt-4 border-t">
+                    <div>
+                      <div className="text-sm text-gray-500 mb-1">Desde</div>
+                      <div className="text-3xl font-bold text-[#0B8A5F]">
+                        {formatPrice(calculatePrice())}
+                      </div>
+                    </div>
+
+                    <Button
+                      onClick={handleAddToCart}
+                      disabled={isAdding}
+                      className={`text-base px-6 py-6 h-auto shadow-lg ${
+                        isAdding
+                          ? '!bg-green-500 !text-white'
+                          : '!bg-[#F48C42] hover:!bg-[#F48C42]/90 !text-white'
+                      }`}
+                    >
+                      <ShoppingCart className="w-5 h-5 mr-2" />
+                      {isAdding ? '¡Agregado!' : 'Agregar'}
+                    </Button>
                   </div>
-                  <Button
-                    onClick={handleAddToCart}
-                    disabled={isAdding}
-                    className={`px-5 py-2.5 rounded-xl font-semibold transition-all text-sm ${
-                      isAdding
-                        ? 'bg-green-500 text-white'
-                        : isCombo
-                        ? 'bg-[#F3C64B] text-[#5C3A21] hover:bg-[#F3C64B]/90'
-                        : 'bg-[#0B8A5F] text-white hover:bg-[#0B8A5F]/90'
-                    }`}
-                  >
-                    {isAdding ? (
-                      <>
-                        <Check className="w-5 h-5 mr-2" />
-                        ¡Agregado!
-                      </>
-                    ) : (
-                      <>
-                        <ShoppingCart className="w-5 h-5 mr-2" />
-                        Agregar
-                      </>
-                    )}
-                  </Button>
-                </div>
-              </div>
-            </div>
 
-            {/* Floating Trust Badge */}
-            <div className="absolute -top-3 -right-3 bg-white rounded-xl p-3 shadow-xl">
-              <div className="flex items-center space-x-2">
-                <div className="w-10 h-10 bg-[#0B8A5F] rounded-full flex items-center justify-center">
-                  <Check className="w-5 h-5 text-white" />
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-[#5C3A21]">Envío Gratis</p>
-                  <p className="text-xs text-gray-600">Compras +S/50</p>
+                  {/* Quick Link to Product */}
+                  <Link to={isCombo ? `/combo/${item.slug}` : `/producto/${item.slug}`}>
+                    <Button
+                      variant="ghost"
+                      className="w-full mt-3 text-[#0B8A5F] hover:text-[#0B8A5F]/80 hover:bg-[#0B8A5F]/5"
+                    >
+                      Ver detalles del producto
+                    </Button>
+                  </Link>
                 </div>
               </div>
             </div>
           </div>
+
         </div>
       </div>
     </section>
