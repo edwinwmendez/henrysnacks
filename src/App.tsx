@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { CartProvider } from './contexts/CartContext';
 import { HomePage } from './pages/HomePage';
-import { CatalogPage } from './pages/CatalogPage';
+import { StorePage } from './pages/StorePage';
 import { ProductDetailPage } from './pages/ProductDetailPage';
 import { ComboDetailPage } from './pages/ComboDetailPage';
 import { OrdersPage } from './pages/admin/OrdersPage';
@@ -21,7 +21,7 @@ function App() {
           <div className="min-h-screen bg-white">
             <Routes>
               <Route path="/" element={<HomePage />} />
-              <Route path="/tienda" element={<CatalogPage />} />
+              <Route path="/tienda" element={<StorePage />} />
               <Route path="/producto/:slug" element={<ProductDetailPage />} />
               <Route path="/combo/:slug" element={<ComboDetailPage />} />
 
