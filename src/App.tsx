@@ -4,6 +4,7 @@ import { CartProvider } from './contexts/CartContext';
 import { HomePage } from './pages/HomePage';
 import { CatalogPage } from './pages/CatalogPage';
 import { ProductDetailPage } from './pages/ProductDetailPage';
+import { ComboDetailPage } from './pages/ComboDetailPage';
 import { OrdersPage } from './pages/admin/OrdersPage';
 import { ProductsPage } from './pages/admin/ProductsPage';
 import { CombosPage } from './pages/admin/CombosPage';
@@ -22,6 +23,7 @@ function App() {
               <Route path="/" element={<HomePage />} />
               <Route path="/tienda" element={<CatalogPage />} />
               <Route path="/producto/:slug" element={<ProductDetailPage />} />
+              <Route path="/combo/:slug" element={<ComboDetailPage />} />
 
               {/* Admin Routes - Protected */}
               <Route path="/admin" element={<Navigate to="/admin/orders" replace />} />

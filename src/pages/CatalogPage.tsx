@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { Header } from '../components/layout/Header';
 import { Footer } from '../components/layout/Footer';
 import { CartDrawer } from '../components/cart/CartDrawer';
@@ -191,7 +192,10 @@ export function CatalogPage() {
                     key={`${catalogItem.type}-${item.id}`}
                     className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden"
                   >
-                    <div className="block relative aspect-square overflow-hidden">
+                    <Link
+                      to={isCombo ? `/combo/${item.slug}` : `/producto/${item.slug}`}
+                      className="block relative aspect-square overflow-hidden"
+                    >
                       <img
                         src={item.images[0]}
                         alt={item.name}
@@ -238,16 +242,18 @@ export function CatalogPage() {
                           <Plus className="w-4 h-4" />
                         </Button>
                       </div>
-                    </div>
+                    </Link>
 
                     <div className="p-4 space-y-3">
                       <span className="text-[#F48C42] text-xs font-medium uppercase tracking-wide">
                         {isCombo ? 'Combo' : (item as Product).category.replace('-', ' ')}
                       </span>
 
-                      <h3 className="text-lg font-bold text-[#5C3A21] line-clamp-2">
-                        {item.name}
-                      </h3>
+                      <Link to={isCombo ? `/combo/${item.slug}` : `/producto/${item.slug}`}>
+                        <h3 className="text-lg font-bold text-[#5C3A21] hover:text-[#0B8A5F] transition-colors line-clamp-2">
+                          {item.name}
+                        </h3>
+                      </Link>
 
                       {isCombo ? (
                         <div className="text-xs text-gray-600">
