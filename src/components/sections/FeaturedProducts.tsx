@@ -25,14 +25,14 @@ function ProductCard({ product, onAddToCart }: ProductCardProps) {
         {/* Tags */}
         <div className="absolute top-3 left-3 flex flex-wrap gap-2">
           {product.featured && (
-            <span className="bg-[#F3C64B] text-[#5C3A21] px-2 py-1 rounded-full text-xs font-medium flex items-center">
-              <Star className="w-3 h-3 mr-1" />
+            <span className="!bg-[#F3C64B] !text-[#5C3A21] px-2 py-1 rounded-full text-xs font-bold flex items-center shadow-md">
+              <Star className="w-3 h-3 mr-1 fill-current" />
               Destacado
             </span>
           )}
           {product.tags.includes('tradicional') && (
-            <span className="bg-[#0B8A5F] text-white px-2 py-1 rounded-full text-xs font-medium flex items-center">
-              <Leaf className="w-3 h-3 mr-1" />
+            <span className="!bg-[#0B8A5F] !text-white px-2 py-1 rounded-full text-xs font-bold flex items-center shadow-md">
+              <Leaf className="w-3 h-3 mr-1 fill-current" />
               Tradicional
             </span>
           )}

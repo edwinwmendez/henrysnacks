@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { ShoppingCart, Menu, User } from 'lucide-react';
+import { ShoppingCart, Menu, User, LogOut, LayoutDashboard } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { useCart } from '../../contexts/CartContext';
 import { useAuth } from '../../contexts/AuthContext';
@@ -9,7 +9,7 @@ import { AuthModal } from '../auth/AuthModal';
 
 export function Header() {
   const { state, toggleCart } = useCart();
-  const { state: authState } = useAuth();
+  const { state: authState, logout } = useAuth();
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
@@ -158,6 +158,20 @@ export function Header() {
               {/* Separator */}
               <div className="border-t border-gray-200 my-2"></div>
 
+              {/* Auth Button - Solo si NO está autenticado */}
+              {!authState.isAuthenticated && (
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    setShowAuthModal(true);
+                  }}
+                  className="w-full text-center py-3 bg-[#0B8A5F] text-white rounded-lg hover:bg-[#0B8A5F]/90 transition-all font-medium flex items-center justify-center space-x-2"
+                >
+                  <User className="w-4 h-4" />
+                  <span>Iniciar Sesión</span>
+                </button>
+              )}
+
               {/* Special CTA */}
               <Link
                 to="/tienda"
@@ -166,6 +180,45 @@ export function Header() {
               >
                 Tienda
               </Link>
+
+              {/* User Menu - Solo si está autenticado */}
+              {authState.isAuthenticated && (
+                <div className="border-t border-gray-200 my-2 pt-2">
+                  <div className="bg-gradient-to-br from-[#0B8A5F]/5 to-[#F3C64B]/5 rounded-lg p-3 mb-2">
+                    <p className="font-bold text-[#5C3A21]">{authState.user?.name}</p>
+                    <p className="text-xs text-gray-600">{authState.user?.email}</p>
+                    {authState.user?.role === 'admin' && (
+                      <span className="inline-block mt-1 px-2 py-0.5 !bg-[#F3C64B] !text-[#5C3A21] text-xs rounded-full font-bold shadow-sm">
+                        Administrador
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Admin Panel Link */}
+                  {authState.user?.role === 'admin' && (
+                    <Link
+                      to="/admin"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center space-x-3 py-3 px-2 text-[#5C3A21] hover:bg-gray-50 rounded-lg transition-colors"
+                    >
+                      <LayoutDashboard className="w-4 h-4 text-[#0B8A5F]" />
+                      <span className="font-medium">Panel de Administración</span>
+                    </Link>
+                  )}
+
+                  {/* Logout Button */}
+                  <button
+                    onClick={() => {
+                      logout();
+                      setMobileMenuOpen(false);
+                    }}
+                    className="w-full flex items-center justify-center space-x-2 py-3 mt-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors font-medium"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    <span>Cerrar Sesión</span>
+                  </button>
+                </div>
+              )}
             </nav>
           </div>
         )}

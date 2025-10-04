@@ -11,8 +11,8 @@ interface CartState {
 type CartAction =
   | { type: 'ADD_ITEM'; payload: { product: Product; quantity: number; selectedOptions: Record<string, string> } }
   | { type: 'ADD_COMBO'; payload: { combo: Combo; quantity: number } }
-  | { type: 'REMOVE_ITEM'; payload: { type: 'product' | 'combo'; id: string } }
-  | { type: 'UPDATE_QUANTITY'; payload: { type: 'product' | 'combo'; id: string; quantity: number } }
+  | { type: 'REMOVE_ITEM'; payload: { type: 'product' | 'combo'; id: string; selectedOptions?: Record<string, string> } }
+  | { type: 'UPDATE_QUANTITY'; payload: { type: 'product' | 'combo'; id: string; quantity: number; selectedOptions?: Record<string, string> } }
   | { type: 'CLEAR_CART' }
   | { type: 'TOGGLE_CART' }
   | { type: 'OPEN_CART' }
@@ -24,8 +24,8 @@ const CartContext = createContext<{
   dispatch: React.Dispatch<CartAction>;
   addToCart: (product: Product, quantity: number, selectedOptions: Record<string, string>) => void;
   addComboToCart: (combo: Combo, quantity: number) => void;
-  removeFromCart: (type: 'product' | 'combo', id: string) => void;
-  updateQuantity: (type: 'product' | 'combo', id: string, quantity: number) => void;
+  removeFromCart: (type: 'product' | 'combo', id: string, selectedOptions?: Record<string, string>) => void;
+  updateQuantity: (type: 'product' | 'combo', id: string, quantity: number, selectedOptions?: Record<string, string>) => void;
   clearCart: () => void;
   toggleCart: () => void;
   openCart: () => void;
@@ -134,9 +134,15 @@ function cartReducer(state: CartState, action: CartAction): CartState {
     }
 
     case 'REMOVE_ITEM': {
-      const { type, id } = action.payload;
+      const { type, id, selectedOptions } = action.payload;
       const newItems = state.items.filter(item => {
         if (item.type === 'product' && type === 'product') {
+          // Si se proporcionaron opciones, comparar también las opciones
+          if (selectedOptions) {
+            return !(item.product.id === id &&
+                    JSON.stringify(item.selectedOptions) === JSON.stringify(selectedOptions));
+          }
+          // Si no se proporcionaron opciones, eliminar por ID solamente
           return item.product.id !== id;
         }
         if (item.type === 'combo' && type === 'combo') {
@@ -153,11 +159,16 @@ function cartReducer(state: CartState, action: CartAction): CartState {
     }
 
     case 'UPDATE_QUANTITY': {
-      const { type, id, quantity } = action.payload;
+      const { type, id, quantity, selectedOptions } = action.payload;
 
       const newItems = quantity <= 0
         ? state.items.filter(item => {
             if (item.type === 'product' && type === 'product') {
+              // Si se proporcionaron opciones, comparar también las opciones
+              if (selectedOptions) {
+                return !(item.product.id === id &&
+                        JSON.stringify(item.selectedOptions) === JSON.stringify(selectedOptions));
+              }
               return item.product.id !== id;
             }
             if (item.type === 'combo' && type === 'combo') {
@@ -166,8 +177,16 @@ function cartReducer(state: CartState, action: CartAction): CartState {
             return true;
           })
         : state.items.map(item => {
-            if (item.type === 'product' && type === 'product' && item.product.id === id) {
-              return { ...item, quantity };
+            if (item.type === 'product' && type === 'product') {
+              // Si se proporcionaron opciones, comparar también las opciones
+              if (selectedOptions) {
+                if (item.product.id === id &&
+                    JSON.stringify(item.selectedOptions) === JSON.stringify(selectedOptions)) {
+                  return { ...item, quantity };
+                }
+              } else if (item.product.id === id) {
+                return { ...item, quantity };
+              }
             }
             if (item.type === 'combo' && type === 'combo' && item.combo.id === id) {
               return { ...item, quantity };
@@ -264,12 +283,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
     dispatch({ type: 'ADD_COMBO', payload: { combo, quantity } });
   };
 
-  const removeFromCart = (type: 'product' | 'combo', id: string) => {
-    dispatch({ type: 'REMOVE_ITEM', payload: { type, id } });
+  const removeFromCart = (type: 'product' | 'combo', id: string, selectedOptions?: Record<string, string>) => {
+    dispatch({ type: 'REMOVE_ITEM', payload: { type, id, selectedOptions } });
   };
 
-  const updateQuantity = (type: 'product' | 'combo', id: string, quantity: number) => {
-    dispatch({ type: 'UPDATE_QUANTITY', payload: { type, id, quantity } });
+  const updateQuantity = (type: 'product' | 'combo', id: string, quantity: number, selectedOptions?: Record<string, string>) => {
+    dispatch({ type: 'UPDATE_QUANTITY', payload: { type, id, quantity, selectedOptions } });
   };
 
   const clearCart = () => {

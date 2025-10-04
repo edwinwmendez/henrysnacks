@@ -119,7 +119,7 @@ export function CartDrawer() {
                             <div className="flex items-center justify-between mt-3">
                               <div className="flex items-center space-x-2">
                                 <button
-                                  onClick={() => updateQuantity('product', item.product.id, item.quantity - 1)}
+                                  onClick={() => updateQuantity('product', item.product.id, item.quantity - 1, item.selectedOptions)}
                                   className="w-8 h-8 rounded-full bg-white border flex items-center justify-center hover:bg-gray-50"
                                 >
                                   <Minus className="w-3 h-3" />
@@ -128,7 +128,7 @@ export function CartDrawer() {
                                   {item.quantity}
                                 </span>
                                 <button
-                                  onClick={() => updateQuantity('product', item.product.id, item.quantity + 1)}
+                                  onClick={() => updateQuantity('product', item.product.id, item.quantity + 1, item.selectedOptions)}
                                   className="w-8 h-8 rounded-full bg-white border flex items-center justify-center hover:bg-gray-50"
                                 >
                                   <Plus className="w-3 h-3" />
@@ -140,7 +140,7 @@ export function CartDrawer() {
                                   {formatPrice(item.totalPrice * item.quantity)}
                                 </p>
                                 <button
-                                  onClick={() => removeFromCart('product', item.product.id)}
+                                  onClick={() => removeFromCart('product', item.product.id, item.selectedOptions)}
                                   className="text-xs text-red-500 hover:text-red-600"
                                 >
                                   Eliminar
@@ -162,8 +162,8 @@ export function CartDrawer() {
                               alt={item.combo.name}
                               className="w-16 h-16 rounded-lg object-cover"
                             />
-                            <div className="absolute -top-1 -right-1 bg-[#F3C64B] rounded-full p-1">
-                              <Package className="w-3 h-3 text-[#5C3A21]" />
+                            <div className="absolute -top-1 -right-1 !bg-[#F3C64B] rounded-full p-1 shadow-md">
+                              <Package className="w-3 h-3 !text-[#5C3A21]" />
                             </div>
                           </div>
 
@@ -172,7 +172,7 @@ export function CartDrawer() {
                               <h3 className="font-medium text-[#5C3A21] text-sm">
                                 {item.combo.name}
                               </h3>
-                              <span className="text-xs bg-[#F3C64B] text-[#5C3A21] px-2 py-0.5 rounded-full font-medium">
+                              <span className="text-xs !bg-[#F3C64B] !text-[#5C3A21] px-2 py-0.5 rounded-full font-bold shadow-sm">
                                 -{item.combo.discount_percentage}%
                               </span>
                             </div>

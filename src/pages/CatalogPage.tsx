@@ -206,14 +206,14 @@ export function CatalogPage() {
                       {/* Badges */}
                       <div className="absolute top-3 left-3 flex flex-col gap-2">
                         {item.featured && (
-                          <span className="bg-[#F3C64B] text-[#5C3A21] px-2 py-1 rounded-full text-xs font-bold flex items-center w-fit">
-                            <Star className="w-3 h-3 mr-1" />
+                          <span className="!bg-[#F3C64B] !text-[#5C3A21] px-2 py-1 rounded-full text-xs font-bold flex items-center w-fit shadow-md">
+                            <Star className="w-3 h-3 mr-1 fill-current" />
                             Destacado
                           </span>
                         )}
                         {isCombo && (
-                          <span className="bg-[#0B8A5F] text-white px-2 py-1 rounded-full text-xs font-bold flex items-center w-fit">
-                            <Package className="w-3 h-3 mr-1" />
+                          <span className="!bg-[#0B8A5F] !text-white px-2 py-1 rounded-full text-xs font-bold flex items-center w-fit shadow-md">
+                            <Package className="w-3 h-3 mr-1 fill-current" />
                             COMBO
                           </span>
                         )}
@@ -222,8 +222,8 @@ export function CatalogPage() {
                       {/* Discount Badge for Combos */}
                       {isCombo && (
                         <div className="absolute top-3 right-3">
-                          <span className="bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold flex items-center">
-                            <Tag className="w-3 h-3 mr-1" />
+                          <span className="!bg-red-600 !text-white px-2 py-1 rounded-full text-xs font-bold flex items-center shadow-md">
+                            <Tag className="w-3 h-3 mr-1 fill-current" />
                             -{(item as Combo).discount_percentage}%
                           </span>
                         </div>

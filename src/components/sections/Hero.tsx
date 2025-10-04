@@ -213,13 +213,13 @@ export function Hero() {
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                 />
                 {/* Badge */}
-                <div className="absolute top-4 left-4 bg-[#F48C42] text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg flex items-center">
-                  {isCombo ? <Package className="w-4 h-4 mr-1" /> : '🔥'}
+                <div className="absolute top-4 left-4 !bg-[#F48C42] !text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg flex items-center">
+                  {isCombo ? <Package className="w-4 h-4 mr-1 fill-current" /> : '🔥'}
                   {isCombo ? 'COMBO' : 'Más Vendido'}
                 </div>
                 {isCombo && (
-                  <div className="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold flex items-center">
-                    <Tag className="w-3 h-3 mr-1" />
+                  <div className="absolute top-4 right-4 !bg-red-600 !text-white px-3 py-1 rounded-full text-sm font-bold flex items-center shadow-lg">
+                    <Tag className="w-3 h-3 mr-1 fill-current" />
                     -{(item as Combo).discount_percentage}%
                   </div>
                 )}

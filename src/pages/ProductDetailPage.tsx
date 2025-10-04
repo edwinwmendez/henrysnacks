@@ -196,8 +196,8 @@ export function ProductDetailPage() {
                 {product.category.replace('-', ' ')}
               </span>
               {product.featured && (
-                <span className="bg-[#F3C64B] text-[#5C3A21] px-2 py-1 rounded-full text-xs font-medium flex items-center">
-                  <Star className="w-3 h-3 mr-1" />
+                <span className="!bg-[#F3C64B] !text-[#5C3A21] px-2 py-1 rounded-full text-xs font-bold flex items-center shadow-md">
+                  <Star className="w-3 h-3 mr-1 fill-current" />
                   Destacado
                 </span>
               )}
@@ -402,7 +402,7 @@ export function ProductDetailPage() {
                       </span>
 
                       {relatedProduct.featured && (
-                        <span className="text-xs bg-[#F3C64B] text-[#5C3A21] px-2 py-1 rounded-full font-medium">
+                        <span className="text-xs !bg-[#F3C64B] !text-[#5C3A21] px-2 py-1 rounded-full font-bold shadow-md">
                           Destacado
                         </span>
                       )}

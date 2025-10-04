@@ -152,14 +152,14 @@ export function ComboDetailPage() {
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute top-4 left-4">
-                  <span className="bg-[#F3C64B] text-[#5C3A21] px-4 py-2 rounded-full text-sm font-bold flex items-center">
-                    <Package className="w-4 h-4 mr-1" />
+                  <span className="!bg-[#F3C64B] !text-[#5C3A21] px-4 py-2 rounded-full text-sm font-bold flex items-center shadow-lg">
+                    <Package className="w-4 h-4 mr-1 fill-current" />
                     COMBO
                   </span>
                 </div>
                 <div className="absolute top-4 right-4">
-                  <span className="bg-red-500 text-white px-4 py-2 rounded-full text-sm font-bold flex items-center">
-                    <Tag className="w-4 h-4 mr-1" />
+                  <span className="!bg-red-600 !text-white px-4 py-2 rounded-full text-sm font-bold flex items-center shadow-lg">
+                    <Tag className="w-4 h-4 mr-1 fill-current" />
                     -{combo.discount_percentage}% OFF
                   </span>
                 </div>
@@ -324,8 +324,8 @@ export function ComboDetailPage() {
                         />
                         {relatedCombo.featured && (
                           <div className="absolute top-3 left-3">
-                            <span className="bg-[#F3C64B] text-[#5C3A21] px-2 py-1 rounded-full text-xs font-bold flex items-center">
-                              <Star className="w-3 h-3 mr-1" />
+                            <span className="!bg-[#F3C64B] !text-[#5C3A21] px-2 py-1 rounded-full text-xs font-bold flex items-center shadow-md">
+                              <Star className="w-3 h-3 mr-1 fill-current" />
                               Destacado
                             </span>
                           </div>

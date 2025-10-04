@@ -53,7 +53,7 @@ export function UserMenu() {
             <p className="font-medium text-[#5C3A21]">{state.user.name}</p>
             <p className="text-sm text-gray-500">{state.user.email}</p>
             {state.user.role === 'admin' && (
-              <span className="inline-block mt-1 px-2 py-1 bg-[#F3C64B] text-[#5C3A21] text-xs rounded-full font-medium">
+              <span className="inline-block mt-1 px-2 py-1 !bg-[#F3C64B] !text-[#5C3A21] text-xs rounded-full font-bold shadow-sm">
                 Administrador
               </span>
             )}
