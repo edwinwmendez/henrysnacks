@@ -7,4 +7,22 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ['lucide-react'],
   },
+  build: {
+    // Optimización para producción
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'supabase': ['@supabase/supabase-js'],
+        },
+      },
+    },
+    // Tamaño de chunk para warnings
+    chunkSizeWarningLimit: 1000,
+  },
+  // Configuración para preview en Vercel
+  preview: {
+    port: 4173,
+    strictPort: false,
+  },
 });

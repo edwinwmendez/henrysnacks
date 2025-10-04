@@ -21,7 +21,7 @@ interface District {
 export function SettingsPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [siteName, setSiteName] = useState('Amazonia Crujiente');
+  const [siteName, setSiteName] = useState('Henry Snacks');
   const [siteDescription, setSiteDescription] = useState('');
   const [contactPhone, setContactPhone] = useState('');
   const [contactEmail, setContactEmail] = useState('');

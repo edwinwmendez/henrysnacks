@@ -1,4 +1,4 @@
--- Initial Database Schema for Amazonia Crujiente
+-- Initial Database Schema for Henry Snacks
 -- Creates tables for products, combos, orders, user profiles, and site configuration
 
 -- Products table
