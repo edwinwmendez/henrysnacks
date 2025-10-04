@@ -40,7 +40,7 @@ export function Header() {
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
             <div className="w-8 h-8 bg-gradient-to-br from-[#0B8A5F] to-[#F3C64B] rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">AC</span>
+              <span className="text-white font-bold text-sm">HS</span>
             </div>
             <h1 className="text-xl font-bold bg-gradient-to-r from-[#0B8A5F] to-[#F48C42] bg-clip-text text-transparent">
               HenrySnacks
