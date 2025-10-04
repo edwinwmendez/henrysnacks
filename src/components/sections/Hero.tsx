@@ -1,50 +1,133 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Leaf, Star, ShoppingCart, Check } from 'lucide-react';
+import { ArrowRight, Leaf, Star, ShoppingCart, Check, Package, Tag } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { useCart } from '../../contexts/CartContext';
 import { useProducts } from '../../hooks/useProducts';
+import { useCombos } from '../../hooks/useCombos';
+import { mockOrders } from '../../data/mockData';
+import { formatPrice } from '../../lib/utils';
+import { Product, Combo } from '../../types';
+
+type FeaturedItem =
+  | { type: 'product'; item: Product; sales: number }
+  | { type: 'combo'; item: Combo; sales: number };
 
 export function Hero() {
-  const { addToCart } = useCart();
+  const { addToCart, addComboToCart } = useCart();
   const { products } = useProducts();
-  const [selectedSize, setSelectedSize] = useState('medium');
-  const [selectedProtein, setSelectedProtein] = useState('mixto');
+  const { combos } = useCombos();
+  const [selectedProtein, setSelectedProtein] = useState('none');
   const [isAdding, setIsAdding] = useState(false);
 
-  // Producto destacado: Combo Selva (el más vendido)
-  const featuredProduct = products.find(p => p.id === '5') || products[4];
+  // Calcular dinámicamente el item más vendido (producto o combo)
+  const mostSoldItem: FeaturedItem | null = useMemo(() => {
+    const productCount: Record<string, number> = {};
+    const comboCount: Record<string, number> = {};
 
-  // Calcular precio dinámico según opciones seleccionadas
-  const calculatePrice = () => {
-    if (!featuredProduct) return 0;
-    let price = featuredProduct.basePrice;
+    // Contar ventas de productos y combos
+    mockOrders.forEach(order => {
+      order.items.forEach(item => {
+        if (item.type === 'product') {
+          productCount[item.product.id] = (productCount[item.product.id] || 0) + item.quantity;
+        } else if (item.type === 'combo') {
+          comboCount[item.combo.id] = (comboCount[item.combo.id] || 0) + item.quantity;
+        }
+      });
+    });
 
-    const proteinOption = featuredProduct.options?.find(opt => opt.id === 'protein');
-    if (proteinOption && selectedProtein) {
-      const choice = proteinOption.options.find(opt => opt.id === selectedProtein);
-      if (choice) {
-        price += choice.priceDelta;
-      }
+    // Encontrar el producto más vendido
+    const topProductEntry = Object.entries(productCount).sort((a, b) => b[1] - a[1])[0];
+    const topProduct = topProductEntry
+      ? products.find(p => p.id === topProductEntry[0])
+      : null;
+
+    // Encontrar el combo más vendido
+    const topComboEntry = Object.entries(comboCount).sort((a, b) => b[1] - a[1])[0];
+    const topCombo = topComboEntry
+      ? combos.find(c => c.id === topComboEntry[0])
+      : null;
+
+    // Comparar y retornar el más vendido entre ambos
+    const productSales = topProductEntry?.[1] || 0;
+    const comboSales = topComboEntry?.[1] || 0;
+
+    if (productSales > comboSales && topProduct) {
+      return { type: 'product', item: topProduct, sales: productSales };
+    } else if (comboSales > 0 && topCombo) {
+      return { type: 'combo', item: topCombo, sales: comboSales };
     }
 
-    return price;
+    // Fallback: usar featured
+    const featuredProduct = products.find(p => p.featured);
+    if (featuredProduct) {
+      return { type: 'product', item: featuredProduct, sales: 0 };
+    }
+
+    const featuredCombo = combos.find(c => c.featured);
+    if (featuredCombo) {
+      return { type: 'combo', item: featuredCombo, sales: 0 };
+    }
+
+    return null;
+  }, [products, combos]);
+
+  // Calcular precio según el tipo de item
+  const calculatePrice = () => {
+    if (!mostSoldItem) return 0;
+
+    if (mostSoldItem.type === 'product') {
+      const product = mostSoldItem.item as Product;
+      let price = product.basePrice;
+
+      const proteinOption = product.options?.find(opt => opt.id === 'protein');
+      if (proteinOption && selectedProtein) {
+        const choice = proteinOption.options.find(opt => opt.id === selectedProtein);
+        if (choice) {
+          price += choice.priceDelta;
+        }
+      }
+
+      return price;
+    } else {
+      // Para combos, calcular precio con descuento
+      const combo = mostSoldItem.item as Combo;
+      const regularPrice = combo.items.reduce((sum, item) => {
+        const product = products.find(p => p.id === item.product_id);
+        return sum + (product?.basePrice || 0) * item.quantity;
+      }, 0);
+
+      return regularPrice * (1 - combo.discount_percentage / 100);
+    }
   };
 
   const handleAddToCart = () => {
-    if (!featuredProduct) return;
+    if (!mostSoldItem) return;
     setIsAdding(true);
-    const selectedOptions = {
-      protein: selectedProtein
-    };
-    addToCart(featuredProduct, 1, selectedOptions);
+
+    if (mostSoldItem.type === 'product') {
+      const selectedOptions = {
+        protein: selectedProtein
+      };
+      addToCart(mostSoldItem.item as Product, 1, selectedOptions);
+    } else {
+      addComboToCart(mostSoldItem.item as Combo, 1);
+    }
 
     setTimeout(() => {
       setIsAdding(false);
     }, 2000);
   };
 
-  if (!featuredProduct) return null;
+  const getProductName = (productId: string) => {
+    const product = products.find(p => p.id === productId);
+    return product?.name || 'Producto';
+  };
+
+  if (!mostSoldItem) return null;
+
+  const isCombo = mostSoldItem.type === 'combo';
+  const item = mostSoldItem.item;
 
   return (
     <section className="relative bg-gradient-to-br from-[#0B8A5F] via-[#0B8A5F] to-[#074d3a] overflow-hidden">
@@ -107,74 +190,94 @@ export function Hero() {
 
             {/* CTA */}
             <div className="pt-2">
-              <Link to="/catalogo">
+              <Link to="/tienda">
                 <Button
                   size="lg"
                   className="group bg-[#F3C64B] text-[#5C3A21] hover:bg-[#F3C64B]/90 text-lg px-8 py-6 rounded-xl shadow-2xl hover:shadow-[#F3C64B]/20 transition-all"
                 >
-                  Explorar Catálogo
+                  Explorar Tienda
                   <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
             </div>
           </div>
 
-          {/* Product Card Side */}
+          {/* Featured Item Card */}
           <div className="relative">
-            {/* Main Product Card */}
             <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
-              {/* Product Image */}
+              {/* Image */}
               <div className="relative aspect-video overflow-hidden bg-gradient-to-br from-gray-100 to-gray-50">
                 <img
-                  src={featuredProduct.images[0]}
-                  alt={featuredProduct.name}
+                  src={item.images[0]}
+                  alt={item.name}
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                 />
-                {/* Best Seller Badge */}
-                <div className="absolute top-4 left-4 bg-[#F48C42] text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg">
-                  🔥 Más Vendido
+                {/* Badge */}
+                <div className="absolute top-4 left-4 bg-[#F48C42] text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg flex items-center">
+                  {isCombo ? <Package className="w-4 h-4 mr-1" /> : '🔥'}
+                  {isCombo ? 'COMBO' : 'Más Vendido'}
                 </div>
+                {isCombo && (
+                  <div className="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold flex items-center">
+                    <Tag className="w-3 h-3 mr-1" />
+                    -{(item as Combo).discount_percentage}%
+                  </div>
+                )}
               </div>
 
-              {/* Product Info */}
+              {/* Info */}
               <div className="p-4 lg:p-6 space-y-4">
                 <div>
                   <h3 className="text-xl lg:text-2xl font-bold text-[#5C3A21] mb-1.5">
-                    {featuredProduct.name}
+                    {item.name}
                   </h3>
                   <p className="text-sm text-gray-600 leading-relaxed">
-                    {featuredProduct.description}
+                    {item.description}
                   </p>
                 </div>
 
-                {/* Options */}
-                {featuredProduct.options && featuredProduct.options.length > 0 && (
-                  <div className="space-y-3">
-                    {featuredProduct.options.find(opt => opt.id === 'protein') && (
-                      <div>
-                        <label className="block text-sm font-semibold text-[#5C3A21] mb-2">
-                          Proteína Principal
-                        </label>
-                        <div className="grid grid-cols-3 gap-2">
-                          {featuredProduct.options
-                            .find(opt => opt.id === 'protein')
-                            ?.options.map(option => (
-                              <button
-                                key={option.id}
-                                onClick={() => setSelectedProtein(option.id)}
-                                className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
-                                  selectedProtein === option.id
-                                    ? 'bg-[#0B8A5F] text-white'
-                                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                                }`}
-                              >
-                                {option.name}
-                              </button>
-                            ))}
-                        </div>
-                      </div>
-                    )}
+                {/* Combo Items or Product Options */}
+                {isCombo ? (
+                  <div className="bg-[#0B8A5F]/5 rounded-lg p-3">
+                    <p className="text-xs font-semibold text-[#0B8A5F] mb-2">Incluye:</p>
+                    <ul className="space-y-1">
+                      {(item as Combo).items.map((comboItem, index) => (
+                        <li key={index} className="text-xs text-gray-600 flex items-center">
+                          <span className="w-1.5 h-1.5 bg-[#F3C64B] rounded-full mr-2"></span>
+                          {comboItem.quantity}x {getProductName(comboItem.product_id)}
+                        </li>
+                      ))}
+                    </ul>
                   </div>
+                ) : (
+                  (item as Product).options && (item as Product).options.length > 0 && (
+                    <div className="space-y-3">
+                      {(item as Product).options.find(opt => opt.id === 'protein') && (
+                        <div>
+                          <label className="block text-sm font-semibold text-[#5C3A21] mb-2">
+                            Acompañamiento
+                          </label>
+                          <div className="grid grid-cols-2 gap-2">
+                            {(item as Product).options
+                              .find(opt => opt.id === 'protein')
+                              ?.options.slice(0, 2).map(option => (
+                                <button
+                                  key={option.id}
+                                  onClick={() => setSelectedProtein(option.id)}
+                                  className={`px-3 py-2 rounded-lg text-xs font-medium transition-all ${
+                                    selectedProtein === option.id
+                                      ? 'bg-[#0B8A5F] text-white'
+                                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                  }`}
+                                >
+                                  {option.name}
+                                </button>
+                              ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )
                 )}
 
                 {/* Price and Add to Cart */}
@@ -182,7 +285,7 @@ export function Hero() {
                   <div>
                     <p className="text-xs text-gray-500">Precio</p>
                     <p className="text-2xl font-bold text-[#0B8A5F]">
-                      S/ {calculatePrice()}
+                      {formatPrice(calculatePrice())}
                     </p>
                   </div>
                   <Button
@@ -191,6 +294,8 @@ export function Hero() {
                     className={`px-5 py-2.5 rounded-xl font-semibold transition-all text-sm ${
                       isAdding
                         ? 'bg-green-500 text-white'
+                        : isCombo
+                        ? 'bg-[#F3C64B] text-[#5C3A21] hover:bg-[#F3C64B]/90'
                         : 'bg-[#0B8A5F] text-white hover:bg-[#0B8A5F]/90'
                     }`}
                   >

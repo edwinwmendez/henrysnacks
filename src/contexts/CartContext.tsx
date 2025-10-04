@@ -1,28 +1,31 @@
 import { createContext, useContext, useReducer, ReactNode, useEffect } from 'react';
-import { CartItem, Product } from '../types';
+import { AnyCartItem, CartItem, Product, Combo, ComboCartItem } from '../types';
+import { mockProducts } from '../data/mockData';
 
 interface CartState {
-  items: CartItem[];
+  items: AnyCartItem[];
   isOpen: boolean;
   total: number;
 }
 
 type CartAction =
   | { type: 'ADD_ITEM'; payload: { product: Product; quantity: number; selectedOptions: Record<string, string> } }
-  | { type: 'REMOVE_ITEM'; payload: string }
-  | { type: 'UPDATE_QUANTITY'; payload: { productId: string; quantity: number } }
+  | { type: 'ADD_COMBO'; payload: { combo: Combo; quantity: number } }
+  | { type: 'REMOVE_ITEM'; payload: { type: 'product' | 'combo'; id: string } }
+  | { type: 'UPDATE_QUANTITY'; payload: { type: 'product' | 'combo'; id: string; quantity: number } }
   | { type: 'CLEAR_CART' }
   | { type: 'TOGGLE_CART' }
   | { type: 'OPEN_CART' }
   | { type: 'CLOSE_CART' }
-  | { type: 'LOAD_CART'; payload: CartItem[] };
+  | { type: 'LOAD_CART'; payload: AnyCartItem[] };
 
 const CartContext = createContext<{
   state: CartState;
   dispatch: React.Dispatch<CartAction>;
   addToCart: (product: Product, quantity: number, selectedOptions: Record<string, string>) => void;
-  removeFromCart: (productId: string) => void;
-  updateQuantity: (productId: string, quantity: number) => void;
+  addComboToCart: (combo: Combo, quantity: number) => void;
+  removeFromCart: (type: 'product' | 'combo', id: string) => void;
+  updateQuantity: (type: 'product' | 'combo', id: string, quantity: number) => void;
   clearCart: () => void;
   toggleCart: () => void;
   openCart: () => void;
@@ -31,7 +34,7 @@ const CartContext = createContext<{
 
 function calculateItemPrice(product: Product, selectedOptions: Record<string, string>): number {
   let price = product.basePrice;
-  
+
   product.options.forEach(option => {
     const selectedValue = selectedOptions[option.id];
     if (selectedValue) {
@@ -41,11 +44,19 @@ function calculateItemPrice(product: Product, selectedOptions: Record<string, st
       }
     }
   });
-  
+
   return price;
 }
 
-function calculateTotal(items: CartItem[]): number {
+function calculateComboPrice(combo: Combo): number {
+  const regularPrice = combo.items.reduce((sum, item) => {
+    const product = mockProducts.find(p => p.id === item.product_id);
+    return sum + (product?.basePrice || 0) * item.quantity;
+  }, 0);
+  return regularPrice * (1 - combo.discount_percentage / 100);
+}
+
+function calculateTotal(items: AnyCartItem[]): number {
   return items.reduce((sum, item) => sum + item.totalPrice * item.quantity, 0);
 }
 
@@ -54,29 +65,32 @@ function cartReducer(state: CartState, action: CartAction): CartState {
     case 'ADD_ITEM': {
       const { product, quantity, selectedOptions } = action.payload;
       const itemPrice = calculateItemPrice(product, selectedOptions);
-      
+
       const existingItemIndex = state.items.findIndex(
-        item => item.product.id === product.id && 
-        JSON.stringify(item.selectedOptions) === JSON.stringify(selectedOptions)
+        item => item.type === 'product' &&
+                item.product.id === product.id &&
+                JSON.stringify(item.selectedOptions) === JSON.stringify(selectedOptions)
       );
-      
-      let newItems: CartItem[];
-      
+
+      let newItems: AnyCartItem[];
+
       if (existingItemIndex >= 0) {
-        newItems = state.items.map((item, index) => 
-          index === existingItemIndex 
+        newItems = state.items.map((item, index) =>
+          index === existingItemIndex
             ? { ...item, quantity: item.quantity + quantity }
             : item
         );
       } else {
-        newItems = [...state.items, {
+        const newItem: CartItem = {
+          type: 'product',
           product,
           quantity,
           selectedOptions,
           totalPrice: itemPrice
-        }];
+        };
+        newItems = [...state.items, newItem];
       }
-      
+
       return {
         ...state,
         items: newItems,
@@ -84,52 +98,109 @@ function cartReducer(state: CartState, action: CartAction): CartState {
         isOpen: true
       };
     }
-    
+
+    case 'ADD_COMBO': {
+      const { combo, quantity } = action.payload;
+      const comboPrice = calculateComboPrice(combo);
+
+      const existingComboIndex = state.items.findIndex(
+        item => item.type === 'combo' && item.combo.id === combo.id
+      );
+
+      let newItems: AnyCartItem[];
+
+      if (existingComboIndex >= 0) {
+        newItems = state.items.map((item, index) =>
+          index === existingComboIndex
+            ? { ...item, quantity: item.quantity + quantity }
+            : item
+        );
+      } else {
+        const newComboItem: ComboCartItem = {
+          type: 'combo',
+          combo,
+          quantity,
+          totalPrice: comboPrice
+        };
+        newItems = [...state.items, newComboItem];
+      }
+
+      return {
+        ...state,
+        items: newItems,
+        total: calculateTotal(newItems),
+        isOpen: true
+      };
+    }
+
     case 'REMOVE_ITEM': {
-      const newItems = state.items.filter(item => item.product.id !== action.payload);
+      const { type, id } = action.payload;
+      const newItems = state.items.filter(item => {
+        if (item.type === 'product' && type === 'product') {
+          return item.product.id !== id;
+        }
+        if (item.type === 'combo' && type === 'combo') {
+          return item.combo.id !== id;
+        }
+        return true;
+      });
+
       return {
         ...state,
         items: newItems,
         total: calculateTotal(newItems)
       };
     }
-    
+
     case 'UPDATE_QUANTITY': {
-      const { productId, quantity } = action.payload;
-      const newItems = quantity <= 0 
-        ? state.items.filter(item => item.product.id !== productId)
-        : state.items.map(item => 
-            item.product.id === productId 
-              ? { ...item, quantity }
-              : item
-          );
-      
+      const { type, id, quantity } = action.payload;
+
+      const newItems = quantity <= 0
+        ? state.items.filter(item => {
+            if (item.type === 'product' && type === 'product') {
+              return item.product.id !== id;
+            }
+            if (item.type === 'combo' && type === 'combo') {
+              return item.combo.id !== id;
+            }
+            return true;
+          })
+        : state.items.map(item => {
+            if (item.type === 'product' && type === 'product' && item.product.id === id) {
+              return { ...item, quantity };
+            }
+            if (item.type === 'combo' && type === 'combo' && item.combo.id === id) {
+              return { ...item, quantity };
+            }
+            return item;
+          });
+
       return {
         ...state,
         items: newItems,
         total: calculateTotal(newItems)
       };
     }
-    
+
     case 'CLEAR_CART':
       return {
         ...state,
         items: [],
         total: 0
       };
-    
+
     case 'TOGGLE_CART':
       return {
         ...state,
         isOpen: !state.isOpen
       };
-      
+
     case 'OPEN_CART':
       return {
         ...state,
         isOpen: true
       };
-      
+
     case 'CLOSE_CART':
       return {
         ...state,
@@ -164,7 +235,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     try {
       const savedCart = localStorage.getItem(CART_STORAGE_KEY);
       if (savedCart) {
-        const cartItems: CartItem[] = JSON.parse(savedCart);
+        const cartItems: AnyCartItem[] = JSON.parse(savedCart);
         dispatch({ type: 'LOAD_CART', payload: cartItems });
       }
     } catch (error) {
@@ -189,12 +260,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
     dispatch({ type: 'ADD_ITEM', payload: { product, quantity, selectedOptions } });
   };
 
-  const removeFromCart = (productId: string) => {
-    dispatch({ type: 'REMOVE_ITEM', payload: productId });
+  const addComboToCart = (combo: Combo, quantity: number) => {
+    dispatch({ type: 'ADD_COMBO', payload: { combo, quantity } });
   };
 
-  const updateQuantity = (productId: string, quantity: number) => {
-    dispatch({ type: 'UPDATE_QUANTITY', payload: { productId, quantity } });
+  const removeFromCart = (type: 'product' | 'combo', id: string) => {
+    dispatch({ type: 'REMOVE_ITEM', payload: { type, id } });
+  };
+
+  const updateQuantity = (type: 'product' | 'combo', id: string, quantity: number) => {
+    dispatch({ type: 'UPDATE_QUANTITY', payload: { type, id, quantity } });
   };
 
   const clearCart = () => {
@@ -212,12 +287,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const closeCart = () => {
     dispatch({ type: 'CLOSE_CART' });
   };
-  
+
   return (
     <CartContext.Provider value={{
       state,
       dispatch,
       addToCart,
+      addComboToCart,
       removeFromCart,
       updateQuantity,
       clearCart,

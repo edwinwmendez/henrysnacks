@@ -1,69 +1,24 @@
 import { useState, useEffect } from 'react';
 import { AdminLayout } from '../../components/admin/AdminLayout';
-import { Plus, Search, CreditCard as Edit, Trash2, X, Save, Package } from 'lucide-react';
+import { Plus, Search, CreditCard as Edit, Trash2, X, Save, Package, Trash, Star } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useProducts } from '../../hooks/useProducts';
+import { useCombos } from '../../hooks/useCombos';
+import { Combo, ComboItem } from '../../types';
 import { formatPrice } from '../../lib/utils';
 import { Button } from '../../components/ui/Button';
 
-interface Combo {
-  id: string;
-  name: string;
-  slug: string;
-  description: string;
-  price: number;
-  discount_percentage: number;
-  product_ids: string[];
-  images: string[];
-  active: boolean;
-  created_at: string;
-  updated_at: string;
-}
-
 export function CombosPage() {
-  const { products, getProductsByCategory, loading, refresh } = useProducts();
-  const [combos, setCombos] = useState<Combo[]>([]);
+  const { products } = useProducts();
+  const { combos, loading, refresh } = useCombos();
   const [filteredCombos, setFilteredCombos] = useState<Combo[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [editingCombo, setEditingCombo] = useState<Combo | null>(null);
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    loadCombos();
-  }, [loading, products]);
-
-  useEffect(() => {
     filterCombos();
   }, [combos, searchTerm]);
-
-  const loadCombos = () => {
-    if (loading) return;
-
-    // TODO: Cuando la base de datos esté lista, usar:
-    // const { data, error } = await supabase
-    //   .from('combos')
-    //   .select('*')
-    //   .order('created_at', { ascending: false });
-
-    const combosFromMock = getProductsByCategory('combo');
-
-    // Convertir los productos combo al formato Combo
-    const combosData: Combo[] = combosFromMock.map(p => ({
-      id: p.id,
-      name: p.name,
-      slug: p.slug,
-      description: p.description,
-      price: p.price,
-      discount_percentage: 0,
-      product_ids: [],
-      images: p.images,
-      active: p.available,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    }));
-
-    setCombos(combosData);
-  };
 
   const filterCombos = () => {
     let filtered = [...combos];
@@ -84,13 +39,13 @@ export function CombosPage() {
       name: '',
       slug: '',
       description: '',
-      price: 0,
-      discount_percentage: 0,
-      product_ids: [],
       images: [],
-      active: true,
-      created_at: '',
-      updated_at: '',
+      tags: [],
+      items: [],
+      discount_percentage: 10,
+      featured: false,
+      available: true,
+      createdAt: new Date().toISOString()
     });
     setShowModal(true);
   };
@@ -106,7 +61,7 @@ export function CombosPage() {
     try {
       const comboData = {
         ...editingCombo,
-        updated_at: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       };
 
       if (editingCombo.id) {
@@ -153,19 +108,45 @@ export function CombosPage() {
   const toggleProductInCombo = (productId: string) => {
     if (!editingCombo) return;
 
-    const productIds = editingCombo.product_ids.includes(productId)
-      ? editingCombo.product_ids.filter(id => id !== productId)
-      : [...editingCombo.product_ids, productId];
+    const existingItem = editingCombo.items.find(item => item.product_id === productId);
 
-    setEditingCombo({ ...editingCombo, product_ids: productIds });
+    if (existingItem) {
+      // Remover producto
+      setEditingCombo({
+        ...editingCombo,
+        items: editingCombo.items.filter(item => item.product_id !== productId)
+      });
+    } else {
+      // Agregar producto con quantity 1
+      setEditingCombo({
+        ...editingCombo,
+        items: [...editingCombo.items, { product_id: productId, quantity: 1 }]
+      });
+    }
+  };
+
+  const updateItemQuantity = (productId: string, quantity: number) => {
+    if (!editingCombo || quantity < 1) return;
+
+    setEditingCombo({
+      ...editingCombo,
+      items: editingCombo.items.map(item =>
+        item.product_id === productId ? { ...item, quantity } : item
+      )
+    });
   };
 
   const calculateRegularPrice = () => {
     if (!editingCombo) return 0;
-    return editingCombo.product_ids.reduce((sum, id) => {
-      const product = products.find(p => p.id === id);
-      return sum + (product?.price || 0);
+    return editingCombo.items.reduce((sum, item) => {
+      const product = products.find(p => p.id === item.product_id);
+      return sum + (product?.basePrice || 0) * item.quantity;
     }, 0);
+  };
+
+  const calculateDiscountedPrice = () => {
+    const regular = calculateRegularPrice();
+    return regular * (1 - editingCombo.discount_percentage / 100);
   };
 
   return (
@@ -175,7 +156,7 @@ export function CombosPage() {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Gestión de Combos</h1>
-            <p className="text-gray-600 mt-1">Crea y administra paquetes especiales</p>
+            <p className="text-gray-600 mt-1">Crea y administra paquetes especiales de productos</p>
           </div>
           <Button onClick={handleCreateCombo} className="flex items-center space-x-2">
             <Plus className="w-5 h-5" />
@@ -205,39 +186,67 @@ export function CombosPage() {
             <div className="col-span-full p-8 text-center text-gray-500">No se encontraron combos</div>
           ) : (
             filteredCombos.map((combo) => {
-              const regularPrice = combo.product_ids.reduce((sum, id) => {
-                const product = products.find(p => p.id === id);
-                return sum + (product?.price || 0);
+              const regularPrice = combo.items.reduce((sum, item) => {
+                const product = products.find(p => p.id === item.product_id);
+                return sum + (product?.basePrice || 0) * item.quantity;
               }, 0);
-              const savings = regularPrice - combo.price;
+              const discountedPrice = regularPrice * (1 - combo.discount_percentage / 100);
+              const savings = regularPrice - discountedPrice;
 
               return (
                 <div key={combo.id} className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow">
+                  {combo.images.length > 0 && (
+                    <div className="aspect-video overflow-hidden rounded-t-lg">
+                      <img
+                        src={combo.images[0]}
+                        alt={combo.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  )}
+
                   <div className="p-6 space-y-4">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <h3 className="text-lg font-bold text-gray-900">{combo.name}</h3>
                         <p className="text-sm text-gray-600 mt-1 line-clamp-2">{combo.description}</p>
                       </div>
-                      <span className={`ml-2 px-2 py-1 text-xs font-semibold rounded-full ${
-                        combo.active
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-gray-100 text-gray-800'
-                      }`}>
-                        {combo.active ? 'Activo' : 'Inactivo'}
-                      </span>
+                      <div className="ml-2 flex flex-col gap-1">
+                        {combo.featured && (
+                          <span className="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800 flex items-center">
+                            <Star className="w-3 h-3 mr-1" />
+                          </span>
+                        )}
+                        <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                          combo.available
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-gray-100 text-gray-800'
+                        }`}>
+                          {combo.available ? 'Activo' : 'Inactivo'}
+                        </span>
+                      </div>
                     </div>
+
+                    {combo.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-1">
+                        {combo.tags.map(tag => (
+                          <span key={tag} className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
 
                     <div className="flex items-center space-x-2 text-sm text-gray-600">
                       <Package className="w-4 h-4" />
-                      <span>{combo.product_ids.length} productos</span>
+                      <span>{combo.items.reduce((sum, item) => sum + item.quantity, 0)} productos</span>
                     </div>
 
                     <div className="pt-4 border-t border-gray-200">
                       <div className="flex items-baseline justify-between">
                         <div>
                           <p className="text-2xl font-bold text-[#0B8A5F]">
-                            {formatPrice(combo.price)}
+                            {formatPrice(discountedPrice)}
                           </p>
                           {savings > 0 && (
                             <p className="text-sm text-gray-500">
@@ -251,7 +260,7 @@ export function CombosPage() {
                               Ahorras {formatPrice(savings)}
                             </p>
                             <p className="text-xs text-gray-500">
-                              {Math.round((savings / regularPrice) * 100)}% desc.
+                              {combo.discount_percentage}% desc.
                             </p>
                           </div>
                         )}
@@ -298,6 +307,7 @@ export function CombosPage() {
             </div>
 
             <div className="p-6 space-y-6">
+              {/* Basic Info */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -336,60 +346,124 @@ export function CombosPage() {
                 />
               </div>
 
+              {/* Images */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Precio del combo
+                  Imágenes (URLs separadas por coma)
+                </label>
+                <textarea
+                  value={editingCombo.images.join(', ')}
+                  onChange={(e) => setEditingCombo({
+                    ...editingCombo,
+                    images: e.target.value.split(',').map(s => s.trim()).filter(Boolean)
+                  })}
+                  rows={2}
+                  placeholder="https://ejemplo.com/imagen1.jpg, https://ejemplo.com/imagen2.jpg"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0B8A5F] focus:border-transparent"
+                />
+              </div>
+
+              {/* Tags */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Tags (separados por coma)
+                </label>
+                <input
+                  type="text"
+                  value={editingCombo.tags.join(', ')}
+                  onChange={(e) => setEditingCombo({
+                    ...editingCombo,
+                    tags: e.target.value.split(',').map(s => s.trim()).filter(Boolean)
+                  })}
+                  placeholder="familiar, económico, popular"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0B8A5F] focus:border-transparent"
+                />
+              </div>
+
+              {/* Discount */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Descuento (%)
                 </label>
                 <input
                   type="number"
-                  step="0.01"
-                  value={editingCombo.price}
-                  onChange={(e) => setEditingCombo({ ...editingCombo, price: parseFloat(e.target.value) })}
+                  min="0"
+                  max="100"
+                  value={editingCombo.discount_percentage}
+                  onChange={(e) => setEditingCombo({ ...editingCombo, discount_percentage: parseInt(e.target.value) || 0 })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0B8A5F] focus:border-transparent"
                 />
-                {editingCombo.product_ids.length > 0 && (
-                  <p className="text-sm text-gray-600 mt-1">
-                    Precio regular: {formatPrice(calculateRegularPrice())} •
-                    Ahorro: {formatPrice(Math.max(0, calculateRegularPrice() - editingCombo.price))}
-                  </p>
-                )}
+                <p className="text-sm text-gray-600 mt-1">
+                  Precio regular: {formatPrice(calculateRegularPrice())} •
+                  Precio con descuento: {formatPrice(calculateDiscountedPrice())} •
+                  Ahorro: {formatPrice(calculateRegularPrice() - calculateDiscountedPrice())}
+                </p>
               </div>
 
+              {/* Products */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-3">
                   Productos incluidos
                 </label>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-60 overflow-y-auto border border-gray-200 rounded-lg p-4">
-                  {products.map((product) => (
-                    <label
-                      key={product.id}
-                      className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={editingCombo.product_ids.includes(product.id)}
-                        onChange={() => toggleProductInCombo(product.id)}
-                        className="rounded border-gray-300 text-[#0B8A5F] focus:ring-[#0B8A5F]"
-                      />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-900 truncate">{product.name}</p>
-                        <p className="text-sm text-gray-500">{formatPrice(product.price)}</p>
+                <div className="space-y-2 max-h-80 overflow-y-auto border border-gray-200 rounded-lg p-4">
+                  {products.map((product) => {
+                    const item = editingCombo.items.find(i => i.product_id === product.id);
+                    const isIncluded = !!item;
+
+                    return (
+                      <div key={product.id} className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                        <input
+                          type="checkbox"
+                          checked={isIncluded}
+                          onChange={() => toggleProductInCombo(product.id)}
+                          className="rounded border-gray-300 text-[#0B8A5F] focus:ring-[#0B8A5F]"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-gray-900 truncate">{product.name}</p>
+                          <p className="text-sm text-gray-500">{formatPrice(product.basePrice)}</p>
+                        </div>
+                        {isIncluded && (
+                          <div className="flex items-center space-x-2">
+                            <label className="text-sm text-gray-600">Cantidad:</label>
+                            <input
+                              type="number"
+                              min="1"
+                              value={item.quantity}
+                              onChange={(e) => updateItemQuantity(product.id, parseInt(e.target.value) || 1)}
+                              className="w-16 px-2 py-1 border border-gray-300 rounded text-center"
+                            />
+                          </div>
+                        )}
                       </div>
-                    </label>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 
-              <div className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  checked={editingCombo.active}
-                  onChange={(e) => setEditingCombo({ ...editingCombo, active: e.target.checked })}
-                  className="rounded border-gray-300 text-[#0B8A5F] focus:ring-[#0B8A5F]"
-                />
-                <label className="text-sm text-gray-700">Combo activo</label>
+              {/* Flags */}
+              <div className="flex items-center space-x-6">
+                <label className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    checked={editingCombo.featured}
+                    onChange={(e) => setEditingCombo({ ...editingCombo, featured: e.target.checked })}
+                    className="rounded border-gray-300 text-[#0B8A5F] focus:ring-[#0B8A5F]"
+                  />
+                  <span className="text-sm text-gray-700">Destacado</span>
+                </label>
+
+                <label className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    checked={editingCombo.available}
+                    onChange={(e) => setEditingCombo({ ...editingCombo, available: e.target.checked })}
+                    className="rounded border-gray-300 text-[#0B8A5F] focus:ring-[#0B8A5F]"
+                  />
+                  <span className="text-sm text-gray-700">Disponible</span>
+                </label>
               </div>
 
+              {/* Actions */}
               <div className="flex justify-end space-x-4 pt-4 border-t">
                 <Button variant="outline" onClick={() => setShowModal(false)}>
                   Cancelar

@@ -76,7 +76,7 @@ export function Header() {
 
             {/* Special CTA */}
             <Link
-              to="/catalogo"
+              to="/tienda"
               className="px-4 py-2 border-2 border-[#0B8A5F] text-[#0B8A5F] rounded-lg hover:bg-[#0B8A5F] hover:text-white transition-all font-medium"
             >
               Tienda
@@ -160,7 +160,7 @@ export function Header() {
 
               {/* Special CTA */}
               <Link
-                to="/catalogo"
+                to="/tienda"
                 onClick={() => setMobileMenuOpen(false)}
                 className="block text-center py-3 border-2 border-[#0B8A5F] text-[#0B8A5F] rounded-lg hover:bg-[#0B8A5F] hover:text-white transition-all font-medium"
               >

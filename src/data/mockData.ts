@@ -1,4 +1,4 @@
-import { Product, Order } from '../types';
+import { Product, Order, Combo } from '../types';
 
 export const mockProducts: Product[] = [
   {
@@ -145,65 +145,52 @@ export const mockProducts: Product[] = [
     ],
     tags: ['dulce', 'nutritivo', 'especiado'],
     ingredients: ['Camote amazónico', 'Aceite vegetal', 'Sal marina', 'Hierbas amazónicas'],
-    featured: false,
+    featured: true,
     available: true
-  },
+  }
+];
+
+// Combos - Bundles de productos con descuento
+export const mockCombos: Combo[] = [
   {
-    id: '5',
+    id: 'combo-1',
     name: 'Combo Selva - Completo',
     slug: 'combo-selva-completo',
-    category: 'combo',
-    description: 'La experiencia completa: chifles verdes, yuca frita, camote y pollo deshilachado. Perfecto para 2-3 personas.',
-    price: 25,
-    basePrice: 25,
+    description: 'La experiencia completa: chifles verdes, yuca frita y camote. Perfecto para 2-3 personas.',
     images: [
       'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg',
       'https://images.pexels.com/photos/4516622/pexels-photo-4516622.jpeg'
     ],
-    options: [
-      {
-        id: 'protein',
-        name: 'Proteína principal',
-        type: 'protein',
-        options: [
-          { id: 'pollo', name: 'Pollo deshilachado', priceDelta: 0 },
-          { id: 'chicharron', name: 'Chicharrón crujiente', priceDelta: 5 },
-          { id: 'mixto', name: 'Mixto (pollo + chicharrón)', priceDelta: 8 }
-        ]
-      }
+    tags: ['familiar', 'completo', 'mejor valor'],
+    items: [
+      { product_id: '1', quantity: 1 }, // Chifles Verde
+      { product_id: '3', quantity: 1 }, // Yuca
+      { product_id: '4', quantity: 1 }  // Camote
     ],
-    tags: ['combo', 'familiar', 'completo', 'mejor valor'],
-    ingredients: ['Chifles verdes', 'Yuca frita', 'Camote frito', 'Proteína a elección', 'Salsas caseras'],
+    discount_percentage: 20,
     featured: true,
-    available: true
+    available: true,
+    createdAt: '2024-01-10T08:00:00Z'
   },
   {
-    id: '6',
+    id: 'combo-2',
     name: 'Combo Tradicional',
     slug: 'combo-tradicional',
-    category: 'combo',
     description: 'Chifles verdes y maduros con yuca frita. La combinación perfecta de sabores tradicionales.',
-    price: 28,
-    basePrice: 28,
     images: [
       'https://images.pexels.com/photos/2872755/pexels-photo-2872755.jpeg',
       'https://images.pexels.com/photos/5840219/pexels-photo-5840219.jpeg'
     ],
-    options: [
-      {
-        id: 'size',
-        name: 'Tamaño',
-        type: 'size',
-        options: [
-          { id: 'regular', name: 'Regular', priceDelta: 0 },
-          { id: 'grande', name: 'Grande', priceDelta: 10 }
-        ]
-      }
+    tags: ['tradicional', 'popular', 'variado'],
+    items: [
+      { product_id: '1', quantity: 1 }, // Chifles Verde
+      { product_id: '2', quantity: 1 }, // Chifles Maduro
+      { product_id: '3', quantity: 1 }  // Yuca
     ],
-    tags: ['tradicional', 'combinación', 'popular'],
-    ingredients: ['Chifles verdes y maduros', 'Yuca frita', 'Salsas tradicionales'],
+    discount_percentage: 15,
     featured: true,
-    available: true
+    available: true,
+    createdAt: '2024-01-12T10:00:00Z'
   }
 ];
 
@@ -212,6 +199,7 @@ export const mockOrders: Order[] = [
     id: 'ORD-001',
     items: [
       {
+        type: 'product',
         product: mockProducts[0],
         quantity: 2,
         selectedOptions: { size: 'medium', protein: 'pollo' },
@@ -236,12 +224,14 @@ export const mockOrders: Order[] = [
     id: 'ORD-002',
     items: [
       {
-        product: mockProducts[4],
+        type: 'product',
+        product: mockProducts[0],
         quantity: 1,
-        selectedOptions: { protein: 'mixto' },
-        totalPrice: 53
+        selectedOptions: { size: 'large', protein: 'chicharron' },
+        totalPrice: 30
       },
       {
+        type: 'product',
         product: mockProducts[1],
         quantity: 2,
         selectedOptions: { size: 'small' },
@@ -266,6 +256,7 @@ export const mockOrders: Order[] = [
     id: 'ORD-003',
     items: [
       {
+        type: 'product',
         product: mockProducts[2],
         quantity: 1,
         selectedOptions: { size: 'familiar', protein: 'cecina' },
@@ -290,10 +281,11 @@ export const mockOrders: Order[] = [
     id: 'ORD-004',
     items: [
       {
-        product: mockProducts[5],
+        type: 'product',
+        product: mockProducts[2],
         quantity: 2,
-        selectedOptions: { size: 'grande' },
-        totalPrice: 76
+        selectedOptions: { size: 'familiar', protein: 'cecina' },
+        totalPrice: 68
       }
     ],
     total: 85,
@@ -314,6 +306,7 @@ export const mockOrders: Order[] = [
     id: 'ORD-005',
     items: [
       {
+        type: 'product',
         product: mockProducts[3],
         quantity: 3,
         selectedOptions: { size: 'medium', seasoning: 'spicy' },
@@ -338,12 +331,14 @@ export const mockOrders: Order[] = [
     id: 'ORD-006',
     items: [
       {
+        type: 'product',
         product: mockProducts[0],
         quantity: 1,
         selectedOptions: { size: 'large', protein: 'chicharron' },
         totalPrice: 30
       },
       {
+        type: 'product',
         product: mockProducts[1],
         quantity: 1,
         selectedOptions: { size: 'medium' },
@@ -368,10 +363,11 @@ export const mockOrders: Order[] = [
     id: 'ORD-007',
     items: [
       {
-        product: mockProducts[4],
+        type: 'product',
+        product: mockProducts[3],
         quantity: 1,
-        selectedOptions: { protein: 'pollo' },
-        totalPrice: 45
+        selectedOptions: { size: 'large', seasoning: 'spicy' },
+        totalPrice: 24
       }
     ],
     total: 50,

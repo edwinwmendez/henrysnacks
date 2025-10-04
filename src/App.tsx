@@ -20,7 +20,7 @@ function App() {
           <div className="min-h-screen bg-white">
             <Routes>
               <Route path="/" element={<HomePage />} />
-              <Route path="/catalogo" element={<CatalogPage />} />
+              <Route path="/tienda" element={<CatalogPage />} />
               <Route path="/producto/:slug" element={<ProductDetailPage />} />
 
               {/* Admin Routes - Protected */}

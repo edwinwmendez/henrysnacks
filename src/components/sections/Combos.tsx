@@ -1,23 +1,35 @@
 import { Link } from 'react-router-dom';
-import { Package, Plus, Users } from 'lucide-react';
+import { Package, Plus, Users, Tag } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { formatPrice } from '../../lib/utils';
 import { useProducts } from '../../hooks/useProducts';
+import { useCombos } from '../../hooks/useCombos';
 import { useCart } from '../../contexts/CartContext';
-import { Product } from '../../types';
+import { Combo } from '../../types';
 
 interface ComboCardProps {
-  product: Product;
-  onAddToCart: (product: Product) => void;
+  combo: Combo;
+  onAddToCart: (combo: Combo) => void;
+  regularPrice: number;
+  discountedPrice: number;
 }
 
-function ComboCard({ product, onAddToCart }: ComboCardProps) {
+function ComboCard({ combo, onAddToCart, regularPrice, discountedPrice }: ComboCardProps) {
+  const { products } = useProducts();
+
+  const getProductName = (productId: string) => {
+    const product = products.find(p => p.id === productId);
+    return product?.name || 'Producto';
+  };
+
+  const savings = regularPrice - discountedPrice;
+
   return (
     <div className="group bg-gradient-to-br from-white to-[#FBFAF7] rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border-2 border-[#F3C64B]/30">
-      <Link to={`/producto/${product.slug}`} className="block relative aspect-[16/9] overflow-hidden">
+      <div className="block relative aspect-[16/9] overflow-hidden">
         <img
-          src={product.images[0]}
-          alt={product.name}
+          src={combo.images[0]}
+          alt={combo.name}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
@@ -30,38 +42,67 @@ function ComboCard({ product, onAddToCart }: ComboCardProps) {
           </span>
         </div>
 
+        {/* Discount Badge */}
+        <div className="absolute top-3 right-3">
+          <span className="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold flex items-center">
+            <Tag className="w-4 h-4 mr-1" />
+            -{combo.discount_percentage}%
+          </span>
+        </div>
+
         {/* Add Button */}
         <div className="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-300">
           <Button
             size="sm"
             onClick={(e) => {
               e.preventDefault();
-              onAddToCart(product);
+              onAddToCart(combo);
             }}
             className="rounded-full w-10 h-10 p-0 shadow-lg"
           >
             <Plus className="w-4 h-4" />
           </Button>
         </div>
-      </Link>
+      </div>
 
       <div className="p-6 space-y-4">
-        <Link to={`/producto/${product.slug}`}>
-          <h3 className="text-xl font-bold text-[#5C3A21] hover:text-[#0B8A5F] transition-colors cursor-pointer">
-            {product.name}
+        <div>
+          <h3 className="text-xl font-bold text-[#5C3A21]">
+            {combo.name}
           </h3>
-        </Link>
+        </div>
 
         <p className="text-gray-600 text-sm leading-relaxed line-clamp-2">
-          {product.description}
+          {combo.description}
         </p>
+
+        {/* Included Products */}
+        <div className="bg-[#0B8A5F]/5 rounded-lg p-3">
+          <p className="text-xs font-semibold text-[#0B8A5F] mb-2">Incluye:</p>
+          <ul className="space-y-1">
+            {combo.items.map((item, index) => (
+              <li key={index} className="text-xs text-gray-600 flex items-center">
+                <span className="w-1.5 h-1.5 bg-[#F3C64B] rounded-full mr-2"></span>
+                {item.quantity}x {getProductName(item.product_id)}
+              </li>
+            ))}
+          </ul>
+        </div>
 
         <div className="flex items-center justify-between pt-2 border-t border-[#0B8A5F]/10">
           <div>
-            <span className="text-2xl font-bold text-[#0B8A5F]">
-              {formatPrice(product.price)}
-            </span>
-            {product.tags.includes('familiar') && (
+            <div className="flex items-baseline space-x-2">
+              <span className="text-2xl font-bold text-[#0B8A5F]">
+                {formatPrice(discountedPrice)}
+              </span>
+              <span className="text-sm text-gray-400 line-through">
+                {formatPrice(regularPrice)}
+              </span>
+            </div>
+            <div className="flex items-center text-xs text-green-600 mt-1">
+              Ahorras {formatPrice(savings)}
+            </div>
+            {combo.tags.includes('familiar') && (
               <div className="flex items-center text-xs text-gray-500 mt-1">
                 <Users className="w-3 h-3 mr-1" />
                 2-3 personas
@@ -71,7 +112,7 @@ function ComboCard({ product, onAddToCart }: ComboCardProps) {
 
           <Button
             size="sm"
-            onClick={() => onAddToCart(product)}
+            onClick={() => onAddToCart(combo)}
             className="bg-[#F3C64B] hover:bg-[#F3C64B]/90 text-[#5C3A21]"
           >
             Agregar
@@ -83,18 +124,21 @@ function ComboCard({ product, onAddToCart }: ComboCardProps) {
 }
 
 export function Combos() {
-  const { addToCart } = useCart();
-  const { getProductsByCategory } = useProducts();
-  const combos = getProductsByCategory('combo');
+  const { addComboToCart } = useCart();
+  const { combos } = useCombos();
+  const { products } = useProducts();
 
-  const handleAddToCart = (product: Product) => {
-    const defaultOptions: Record<string, string> = {};
-    product.options.forEach(option => {
-      if (option.options.length > 0) {
-        defaultOptions[option.id] = option.options[0].id;
-      }
-    });
-    addToCart(product, 1, defaultOptions);
+  const calculateComboPrice = (combo: Combo) => {
+    const regularPrice = combo.items.reduce((sum, item) => {
+      const product = products.find(p => p.id === item.product_id);
+      return sum + (product?.basePrice || 0) * item.quantity;
+    }, 0);
+    const discountedPrice = regularPrice * (1 - combo.discount_percentage / 100);
+    return { regularPrice, discountedPrice };
+  };
+
+  const handleAddToCart = (combo: Combo) => {
+    addComboToCart(combo, 1);
   };
 
   return (
@@ -119,13 +163,18 @@ export function Combos() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {combos.map(product => (
-            <ComboCard
-              key={product.id}
-              product={product}
-              onAddToCart={handleAddToCart}
-            />
-          ))}
+          {combos.filter(c => c.available).map(combo => {
+            const { regularPrice, discountedPrice } = calculateComboPrice(combo);
+            return (
+              <ComboCard
+                key={combo.id}
+                combo={combo}
+                onAddToCart={handleAddToCart}
+                regularPrice={regularPrice}
+                discountedPrice={discountedPrice}
+              />
+            );
+          })}
         </div>
       </div>
     </section>
