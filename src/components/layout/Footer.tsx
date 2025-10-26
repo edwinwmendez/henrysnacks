@@ -1,4 +1,5 @@
-import { MapPin, Phone, Mail, Instagram, Facebook } from 'lucide-react';
+import { MapPin, Phone, Mail } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export function Footer() {
   return (
@@ -9,31 +10,45 @@ export function Footer() {
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-gradient-to-br from-[#0B8A5F] to-[#F3C64B] rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">AC</span>
+                <span className="text-white font-bold text-sm">HS</span>
               </div>
               <h2 className="text-lg font-bold">HenrySnacks</h2>
             </div>
             <p className="text-[#FBFAF7]/80 text-sm leading-relaxed">
               Sabores auténticos de la Amazonía peruana, preparados con amor y tradición ancestral.
             </p>
+            {/* Redes sociales - Descomentar cuando estén disponibles
             <div className="flex space-x-4">
-              <button className="text-[#FBFAF7]/70 hover:text-[#F3C64B] transition-colors">
+              <a
+                href="https://instagram.com/henrysnacks"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#FBFAF7]/70 hover:text-[#F3C64B] transition-colors"
+                aria-label="Síguenos en Instagram"
+              >
                 <Instagram className="w-5 h-5" />
-              </button>
-              <button className="text-[#FBFAF7]/70 hover:text-[#F3C64B] transition-colors">
+              </a>
+              <a
+                href="https://facebook.com/henrysnacks"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#FBFAF7]/70 hover:text-[#F3C64B] transition-colors"
+                aria-label="Síguenos en Facebook"
+              >
                 <Facebook className="w-5 h-5" />
-              </button>
+              </a>
             </div>
+            */}
           </div>
           
           {/* Quick Links */}
           <div>
             <h3 className="font-semibold mb-4 text-[#F3C64B]">Enlaces Rápidos</h3>
             <ul className="space-y-2 text-sm">
-              <li><a href="#productos" className="text-[#FBFAF7]/80 hover:text-white transition-colors">Nuestros Productos</a></li>
-              <li><a href="#combos" className="text-[#FBFAF7]/80 hover:text-white transition-colors">Combos Familiares</a></li>
-              <li><a href="#historia" className="text-[#FBFAF7]/80 hover:text-white transition-colors">Nuestra Historia</a></li>
-              <li><a href="#delivery" className="text-[#FBFAF7]/80 hover:text-white transition-colors">Zonas de Delivery</a></li>
+              <li><Link to="/tienda" className="text-[#FBFAF7]/80 hover:text-white transition-colors">Tienda</Link></li>
+              <li><Link to="/como-funciona" className="text-[#FBFAF7]/80 hover:text-white transition-colors">¿Cómo Funciona?</Link></li>
+              <li><Link to="/nuestra-historia" className="text-[#FBFAF7]/80 hover:text-white transition-colors">Nuestra Historia</Link></li>
+              <li><Link to="/preguntas-frecuentes" className="text-[#FBFAF7]/80 hover:text-white transition-colors">Preguntas Frecuentes</Link></li>
             </ul>
           </div>
           

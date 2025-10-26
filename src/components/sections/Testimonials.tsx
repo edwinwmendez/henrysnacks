@@ -4,14 +4,14 @@ export function Testimonials() {
   const testimonials = [
     {
       name: "Carmen Flores",
-      location: "Centro ciudad",
+      location: "Centro de Atalaya",
       rating: 5,
-      text: "Los chifles más ricos que he probado en Lima. El sabor me transporta a mi infancia en la selva. ¡Excelente calidad y entrega súper rápida!",
+      text: "Los chifles más ricos que he probado. El sabor auténtico de la selva, preparados con la receta tradicional. ¡Excelente calidad y entrega súper rápida!",
       avatar: "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?w=100&h=100&fit=crop&crop=face"
     },
     {
       name: "Roberto Vásquez",
-      location: "Miraflores", 
+      location: "Raymondi",
       rating: 5,
       text: "El Combo Selva es perfecto para compartir en familia. Los ingredientes son frescos y se nota la calidad. Definitivamente seguiré pidiendo.",
       avatar: "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?w=100&h=100&fit=crop&crop=face"
@@ -42,7 +42,7 @@ export function Testimonials() {
           </h2>
           
           <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            Más de 500 familias limeñas ya disfrutan de nuestros sabores amazónicos.
+            Más de 200 familias en Atalaya ya disfrutan de nuestros sabores amazónicos.
             Lee sus experiencias y únete a nuestra comunidad.
           </p>
         </div>

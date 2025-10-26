@@ -64,12 +64,6 @@ export function Header() {
             >
               Combos
             </button>
-            <button
-              onClick={() => handleNavClick('#historia')}
-              className="text-[#5C3A21] hover:text-[#0B8A5F] transition-colors"
-            >
-              Nuestra Historia
-            </button>
 
             {/* Separator */}
             <div className="h-6 w-px bg-gray-300"></div>
@@ -147,12 +141,6 @@ export function Header() {
                 className="block w-full text-left py-2 text-[#5C3A21] hover:text-[#0B8A5F] transition-colors"
               >
                 Combos
-              </button>
-              <button
-                onClick={() => handleNavClick('#historia')}
-                className="block w-full text-left py-2 text-[#5C3A21] hover:text-[#0B8A5F] transition-colors"
-              >
-                Nuestra Historia
               </button>
 
               {/* Separator */}

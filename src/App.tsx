@@ -5,6 +5,9 @@ import { HomePage } from './pages/HomePage';
 import { StorePage } from './pages/StorePage';
 import { ProductDetailPage } from './pages/ProductDetailPage';
 import { ComboDetailPage } from './pages/ComboDetailPage';
+import { FAQPage } from './pages/FAQPage';
+import { HowItWorksPage } from './pages/HowItWorksPage';
+import { HistoriaPage } from './pages/HistoriaPage';
 import { OrdersPage } from './pages/admin/OrdersPage';
 import { ProductsPage } from './pages/admin/ProductsPage';
 import { CombosPage } from './pages/admin/CombosPage';
@@ -24,6 +27,9 @@ function App() {
               <Route path="/tienda" element={<StorePage />} />
               <Route path="/producto/:slug" element={<ProductDetailPage />} />
               <Route path="/combo/:slug" element={<ComboDetailPage />} />
+              <Route path="/preguntas-frecuentes" element={<FAQPage />} />
+              <Route path="/como-funciona" element={<HowItWorksPage />} />
+              <Route path="/nuestra-historia" element={<HistoriaPage />} />
 
               {/* Admin Routes - Protected */}
               <Route path="/admin" element={<Navigate to="/admin/orders" replace />} />
