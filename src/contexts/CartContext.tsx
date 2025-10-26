@@ -1,6 +1,22 @@
-import { createContext, useContext, useReducer, ReactNode, useEffect } from 'react';
+import { createContext, useContext, useReducer, ReactNode, useEffect, useCallback } from 'react';
 import { AnyCartItem, CartItem, Product, Combo, ComboCartItem } from '../types';
 import { mockProducts } from '../data/mockData';
+
+/**
+ * Compara dos objetos de opciones de manera eficiente
+ * Alternativa optimizada a JSON.stringify que es más rápida y type-safe
+ */
+function areOptionsEqual(
+  options1: Record<string, string>,
+  options2: Record<string, string>
+): boolean {
+  const keys1 = Object.keys(options1);
+  const keys2 = Object.keys(options2);
+
+  if (keys1.length !== keys2.length) return false;
+
+  return keys1.every(key => options1[key] === options2[key]);
+}
 
 interface CartState {
   items: AnyCartItem[];
@@ -69,7 +85,7 @@ function cartReducer(state: CartState, action: CartAction): CartState {
       const existingItemIndex = state.items.findIndex(
         item => item.type === 'product' &&
                 item.product.id === product.id &&
-                JSON.stringify(item.selectedOptions) === JSON.stringify(selectedOptions)
+                areOptionsEqual(item.selectedOptions, selectedOptions)
       );
 
       let newItems: AnyCartItem[];
@@ -140,7 +156,7 @@ function cartReducer(state: CartState, action: CartAction): CartState {
           // Si se proporcionaron opciones, comparar también las opciones
           if (selectedOptions) {
             return !(item.product.id === id &&
-                    JSON.stringify(item.selectedOptions) === JSON.stringify(selectedOptions));
+                    areOptionsEqual(item.selectedOptions, selectedOptions));
           }
           // Si no se proporcionaron opciones, eliminar por ID solamente
           return item.product.id !== id;
@@ -167,7 +183,7 @@ function cartReducer(state: CartState, action: CartAction): CartState {
               // Si se proporcionaron opciones, comparar también las opciones
               if (selectedOptions) {
                 return !(item.product.id === id &&
-                        JSON.stringify(item.selectedOptions) === JSON.stringify(selectedOptions));
+                        areOptionsEqual(item.selectedOptions, selectedOptions));
               }
               return item.product.id !== id;
             }
@@ -181,7 +197,7 @@ function cartReducer(state: CartState, action: CartAction): CartState {
               // Si se proporcionaron opciones, comparar también las opciones
               if (selectedOptions) {
                 if (item.product.id === id &&
-                    JSON.stringify(item.selectedOptions) === JSON.stringify(selectedOptions)) {
+                    areOptionsEqual(item.selectedOptions, selectedOptions)) {
                   return { ...item, quantity };
                 }
               } else if (item.product.id === id) {
@@ -244,7 +260,7 @@ const initialState: CartState = {
   total: 0
 };
 
-const CART_STORAGE_KEY = 'amazonia-crujiente-cart';
+const CART_STORAGE_KEY = 'henrysnacks-cart';
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(cartReducer, initialState);
@@ -275,37 +291,38 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }, [state.items]);
 
-  const addToCart = (product: Product, quantity: number, selectedOptions: Record<string, string>) => {
+  // Memoización de funciones con useCallback para prevenir re-renders innecesarios
+  const addToCart = useCallback((product: Product, quantity: number, selectedOptions: Record<string, string>) => {
     dispatch({ type: 'ADD_ITEM', payload: { product, quantity, selectedOptions } });
-  };
+  }, []);
 
-  const addComboToCart = (combo: Combo, quantity: number) => {
+  const addComboToCart = useCallback((combo: Combo, quantity: number) => {
     dispatch({ type: 'ADD_COMBO', payload: { combo, quantity } });
-  };
+  }, []);
 
-  const removeFromCart = (type: 'product' | 'combo', id: string, selectedOptions?: Record<string, string>) => {
+  const removeFromCart = useCallback((type: 'product' | 'combo', id: string, selectedOptions?: Record<string, string>) => {
     dispatch({ type: 'REMOVE_ITEM', payload: { type, id, selectedOptions } });
-  };
+  }, []);
 
-  const updateQuantity = (type: 'product' | 'combo', id: string, quantity: number, selectedOptions?: Record<string, string>) => {
+  const updateQuantity = useCallback((type: 'product' | 'combo', id: string, quantity: number, selectedOptions?: Record<string, string>) => {
     dispatch({ type: 'UPDATE_QUANTITY', payload: { type, id, quantity, selectedOptions } });
-  };
+  }, []);
 
-  const clearCart = () => {
+  const clearCart = useCallback(() => {
     dispatch({ type: 'CLEAR_CART' });
-  };
+  }, []);
 
-  const toggleCart = () => {
+  const toggleCart = useCallback(() => {
     dispatch({ type: 'TOGGLE_CART' });
-  };
+  }, []);
 
-  const openCart = () => {
+  const openCart = useCallback(() => {
     dispatch({ type: 'OPEN_CART' });
-  };
+  }, []);
 
-  const closeCart = () => {
+  const closeCart = useCallback(() => {
     dispatch({ type: 'CLOSE_CART' });
-  };
+  }, []);
 
   return (
     <CartContext.Provider value={{

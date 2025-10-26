@@ -1,4 +1,4 @@
-import { createContext, useContext, useReducer, ReactNode, useEffect } from 'react';
+import { createContext, useContext, useReducer, ReactNode, useEffect, useCallback } from 'react';
 
 export interface User {
   id: string;
@@ -121,7 +121,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       try {
         const user = JSON.parse(storedUser);
         dispatch({ type: 'LOGIN_SUCCESS', payload: user });
-      } catch (error) {
+      } catch (error: unknown) {
+        console.error('Error al parsear usuario guardado:', error);
         localStorage.removeItem('auth_user');
         dispatch({ type: 'LOGOUT' });
       }
@@ -131,7 +132,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const login = async (email: string, password: string): Promise<void> => {
+  // Memoización de funciones con useCallback para prevenir re-renders innecesarios
+  const login = useCallback(async (email: string, password: string): Promise<void> => {
     dispatch({ type: 'LOGIN_START' });
 
     // Simulate API delay
@@ -139,7 +141,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // Find user in mock database
     const user = mockUsers.find(u => u.email === email);
-    
+
     if (!user) {
       dispatch({ type: 'LOGIN_ERROR', payload: 'Usuario no encontrado' });
       return;
@@ -154,8 +156,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Store user in localStorage
     localStorage.setItem('auth_user', JSON.stringify(user));
     dispatch({ type: 'LOGIN_SUCCESS', payload: user });
-  };
-  const register = async (name: string, email: string, phone: string, _password: string): Promise<void> => {
+  }, []);
+
+  const register = useCallback(async (name: string, email: string, phone: string, _password: string): Promise<void> => {
     dispatch({ type: 'REGISTER_START' });
 
     // Simulate API delay
@@ -184,16 +187,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Store user in localStorage
     localStorage.setItem('auth_user', JSON.stringify(newUser));
     dispatch({ type: 'REGISTER_SUCCESS', payload: newUser });
-  };
+  }, []);
 
-  const logout = () => {
+  const logout = useCallback(() => {
     localStorage.removeItem('auth_user');
     dispatch({ type: 'LOGOUT' });
-  };
+  }, []);
 
-  const clearError = () => {
+  const clearError = useCallback(() => {
     dispatch({ type: 'CLEAR_ERROR' });
-  };
+  }, []);
 
   return (
     <AuthContext.Provider value={{
