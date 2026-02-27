@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { CartProvider } from './contexts/CartContext';
+import { ToastProvider } from './contexts/ToastContext';
 import { HomePage } from './pages/HomePage';
 import { StorePage } from './pages/StorePage';
 import { ProductDetailPage } from './pages/ProductDetailPage';
@@ -19,6 +20,7 @@ import { ProtectedRoute } from './components/auth/ProtectedRoute';
 function App() {
   return (
     <BrowserRouter>
+      <ToastProvider>
       <AuthProvider>
         <CartProvider>
           <div className="min-h-screen bg-white">
@@ -85,6 +87,7 @@ function App() {
           </div>
         </CartProvider>
       </AuthProvider>
+      </ToastProvider>
     </BrowserRouter>
   );
 }

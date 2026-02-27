@@ -80,6 +80,7 @@ export function FAQ() {
               <button
                 onClick={() => toggleFAQ(index)}
                 className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-[#0B8A5F]/5 transition-colors duration-200"
+                aria-expanded={openIndex === index}
               >
                 <span className="font-semibold text-[#5C3A21] text-lg pr-4">
                   {faq.question}

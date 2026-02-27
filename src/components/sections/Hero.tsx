@@ -124,7 +124,25 @@ export function Hero() {
     return product?.name || 'Producto';
   };
 
-  if (!mostSoldItem) return null;
+  if (!mostSoldItem) {
+    return (
+      <section className="relative min-h-[90vh] flex items-center overflow-hidden bg-gradient-to-br from-[#5C3A21] via-[#5C3A21] to-[#3d2616]">
+        <div className="relative z-10 container mx-auto px-4 py-12">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center max-w-7xl mx-auto">
+            <div className="space-y-6">
+              <div className="h-8 w-64 bg-white/10 rounded-full animate-pulse" />
+              <div className="h-16 w-3/4 bg-white/10 rounded-lg animate-pulse" />
+              <div className="h-6 w-1/2 bg-white/10 rounded animate-pulse" />
+              <div className="h-14 w-48 bg-white/10 rounded-xl animate-pulse" />
+            </div>
+            <div className="flex justify-center lg:justify-end">
+              <div className="w-full max-w-md h-96 bg-white/10 rounded-2xl animate-pulse" />
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   const isCombo = mostSoldItem.type === 'combo';
   const item = mostSoldItem.item;
@@ -184,7 +202,7 @@ export function Hero() {
             <div className="relative max-w-md w-full">
               {/* Best Seller Badge */}
               <div className="absolute -top-4 -left-4 z-20">
-                <div className="!bg-[#F3C64B] !text-[#5C3A21] rounded-full p-4 shadow-xl border-4 border-white animate-pulse">
+                <div className="bg-[#F3C64B] text-[#5C3A21] rounded-full p-4 shadow-xl border-4 border-white animate-pulse">
                   <div className="text-center">
                     <Star className="w-6 h-6 mx-auto mb-1 fill-current" />
                     <div className="text-xs font-bold uppercase">
@@ -208,7 +226,7 @@ export function Hero() {
                   {/* Discount Badge for Combos */}
                   {isCombo && (
                     <div className="absolute top-3 right-3">
-                      <div className="!bg-red-600 !text-white px-3 py-1.5 rounded-full text-sm font-bold flex items-center shadow-lg">
+                      <div className="bg-red-600 text-white px-3 py-1.5 rounded-full text-sm font-bold flex items-center shadow-lg">
                         <Tag className="w-4 h-4 mr-1 fill-current" />
                         -{(item as Combo).discount_percentage}%
                       </div>
@@ -231,7 +249,7 @@ export function Hero() {
                     {item.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="!bg-[#0B8A5F]/10 !text-[#0B8A5F] text-xs px-3 py-1 rounded-full font-medium"
+                        className="bg-[#0B8A5F]/10 text-[#0B8A5F] text-xs px-3 py-1 rounded-full font-medium"
                       >
                         {tag}
                       </span>
@@ -269,7 +287,7 @@ export function Hero() {
                                 onClick={() => setSelectedProtein(option.id)}
                                 className={`px-3 py-2 rounded-lg text-xs font-medium transition-all ${
                                   selectedProtein === option.id
-                                    ? '!bg-[#0B8A5F] !text-white'
+                                    ? 'bg-[#0B8A5F] text-white'
                                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                 }`}
                               >
@@ -295,8 +313,8 @@ export function Hero() {
                       disabled={isAdding}
                       className={`text-base px-6 py-6 h-auto shadow-lg ${
                         isAdding
-                          ? '!bg-green-500 !text-white'
-                          : '!bg-[#F48C42] hover:!bg-[#F48C42]/90 !text-white'
+                          ? 'bg-green-500 text-white'
+                          : 'bg-[#F48C42] hover:bg-[#F48C42]/90 text-white'
                       }`}
                     >
                       <ShoppingCart className="w-5 h-5 mr-2" />

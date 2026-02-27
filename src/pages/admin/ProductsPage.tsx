@@ -6,8 +6,10 @@ import { useProducts } from '../../hooks/useProducts';
 import { Product, ProductOption } from '../../types';
 import { formatPrice } from '../../lib/utils';
 import { Button } from '../../components/ui/Button';
+import { useToast } from '../../contexts/ToastContext';
 
 export function ProductsPage() {
+  const { toast, confirm: confirmDialog } = useToast();
   const { products, loading, refresh } = useProducts();
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -87,14 +89,16 @@ export function ProductsPage() {
       refresh();
       setShowModal(false);
       setEditingProduct(null);
+      toast('Producto guardado exitosamente');
     } catch (error) {
       console.error('Error saving product:', error);
-      alert('Error al guardar el producto');
+      toast('Error al guardar el producto', 'error');
     }
   };
 
   const handleDeleteProduct = async (productId: string) => {
-    if (!confirm('¿Estás seguro de eliminar este producto?')) return;
+    const confirmed = await confirmDialog('¿Estás seguro de eliminar este producto?');
+    if (!confirmed) return;
 
     try {
       const { error } = await supabase
@@ -104,9 +108,10 @@ export function ProductsPage() {
 
       if (error) throw error;
       refresh();
+      toast('Producto eliminado');
     } catch (error) {
       console.error('Error deleting product:', error);
-      alert('Error al eliminar el producto');
+      toast('Error al eliminar el producto', 'error');
     }
   };
 

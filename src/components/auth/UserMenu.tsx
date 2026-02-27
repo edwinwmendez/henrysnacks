@@ -3,11 +3,13 @@ import { Link } from 'react-router-dom';
 import { User, LogOut, ShoppingBag, Settings, ChevronDown, LayoutDashboard } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { useAuth } from '../../contexts/AuthContext';
+import { useToast } from '../../contexts/ToastContext';
 
 export function UserMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const { state, logout } = useAuth();
+  const { toast } = useToast();
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -36,6 +38,8 @@ export function UserMenu() {
         size="sm"
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center space-x-2"
+        aria-haspopup="menu"
+        aria-expanded={isOpen}
       >
         <div className="w-8 h-8 bg-gradient-to-br from-[#0B8A5F] to-[#F3C64B] rounded-full flex items-center justify-center">
           <span className="text-white font-medium text-sm">
@@ -53,7 +57,7 @@ export function UserMenu() {
             <p className="font-medium text-[#5C3A21]">{state.user.name}</p>
             <p className="text-sm text-gray-500">{state.user.email}</p>
             {state.user.role === 'admin' && (
-              <span className="inline-block mt-1 px-2 py-1 !bg-[#F3C64B] !text-[#5C3A21] text-xs rounded-full font-bold shadow-sm">
+              <span className="inline-block mt-1 px-2 py-1 bg-[#F3C64B] text-[#5C3A21] text-xs rounded-full font-bold shadow-sm">
                 Administrador
               </span>
             )}
@@ -77,20 +81,29 @@ export function UserMenu() {
             )}
 
             {/* Opciones comunes */}
-            <button className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-3 text-gray-700">
+            <button
+              onClick={() => { setIsOpen(false); toast('Mi Perfil estará disponible pronto', 'info'); }}
+              className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-3 text-gray-700"
+            >
               <User className="w-4 h-4" />
               <span>Mi Perfil</span>
             </button>
 
             {/* Mis Pedidos - Solo para clientes */}
             {state.user.role === 'customer' && (
-              <button className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-3 text-gray-700">
+              <button
+                onClick={() => { setIsOpen(false); toast('Mis Pedidos estará disponible pronto', 'info'); }}
+                className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-3 text-gray-700"
+              >
                 <ShoppingBag className="w-4 h-4" />
                 <span>Mis Pedidos</span>
               </button>
             )}
 
-            <button className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-3 text-gray-700">
+            <button
+              onClick={() => { setIsOpen(false); toast('Configuración estará disponible pronto', 'info'); }}
+              className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-3 text-gray-700"
+            >
               <Settings className="w-4 h-4" />
               <span>Configuración</span>
             </button>

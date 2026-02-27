@@ -105,8 +105,17 @@ export function ProductDetailPage() {
     return (
       <div className="min-h-screen bg-white">
         <Header />
-        <div className="container mx-auto px-4 py-20">
-          <div className="text-center text-gray-500">Cargando producto...</div>
+        <div className="container mx-auto px-4 py-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <div className="aspect-square rounded-2xl bg-gray-200 animate-pulse" />
+            <div className="space-y-4">
+              <div className="h-4 w-24 bg-gray-200 rounded animate-pulse" />
+              <div className="h-8 w-3/4 bg-gray-200 rounded animate-pulse" />
+              <div className="h-4 w-1/2 bg-gray-200 rounded animate-pulse" />
+              <div className="h-20 w-full bg-gray-200 rounded animate-pulse" />
+              <div className="h-12 w-48 bg-gray-200 rounded animate-pulse" />
+            </div>
+          </div>
         </div>
         <Footer />
         <CartDrawer />
@@ -121,7 +130,7 @@ export function ProductDetailPage() {
         <div className="container mx-auto px-4 py-20">
           <div className="text-center">
             <h1 className="text-2xl font-bold text-gray-900 mb-4">Producto no encontrado</h1>
-            <a href="/" className="text-[#0B8A5F] hover:underline">Volver al inicio</a>
+            <Link to="/" className="text-[#0B8A5F] hover:underline">Volver al inicio</Link>
           </div>
         </div>
         <Footer />
@@ -137,21 +146,21 @@ export function ProductDetailPage() {
       <main className="container mx-auto px-4 py-8">
         {/* Breadcrumb */}
         <div className="flex items-center space-x-2 text-sm text-gray-600 mb-8">
-          <a href="/" className="hover:text-[#0B8A5F] transition-colors">Inicio</a>
+          <Link to="/" className="hover:text-[#0B8A5F] transition-colors">Inicio</Link>
           <span>/</span>
-          <a href="/#productos" className="hover:text-[#0B8A5F] transition-colors">Productos</a>
+          <Link to="/tienda" className="hover:text-[#0B8A5F] transition-colors">Productos</Link>
           <span>/</span>
           <span className="text-gray-900">{product.name}</span>
         </div>
 
         {/* Back button */}
-        <a
-          href="/#productos"
+        <Link
+          to="/tienda"
           className="inline-flex items-center space-x-2 text-[#0B8A5F] hover:text-[#0B8A5F]/80 transition-colors mb-8"
         >
           <ArrowLeft className="w-5 h-5" />
           <span>Volver a productos</span>
-        </a>
+        </Link>
 
         {/* Product details */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -196,7 +205,7 @@ export function ProductDetailPage() {
                 {product.category.replace('-', ' ')}
               </span>
               {product.featured && (
-                <span className="!bg-[#F3C64B] !text-[#5C3A21] px-2 py-1 rounded-full text-xs font-bold flex items-center shadow-md">
+                <span className="bg-[#F3C64B] text-[#5C3A21] px-2 py-1 rounded-full text-xs font-bold flex items-center shadow-md">
                   <Star className="w-3 h-3 mr-1 fill-current" />
                   Destacado
                 </span>
@@ -300,6 +309,7 @@ export function ProductDetailPage() {
                   <button
                     onClick={decrementQuantity}
                     className="w-10 h-10 flex items-center justify-center rounded-lg bg-white hover:bg-gray-50 transition-colors"
+                    aria-label="Disminuir cantidad"
                   >
                     <Minus className="w-5 h-5" />
                   </button>
@@ -309,6 +319,7 @@ export function ProductDetailPage() {
                   <button
                     onClick={incrementQuantity}
                     className="w-10 h-10 flex items-center justify-center rounded-lg bg-white hover:bg-gray-50 transition-colors"
+                    aria-label="Aumentar cantidad"
                   >
                     <Plus className="w-5 h-5" />
                   </button>
@@ -388,6 +399,7 @@ export function ProductDetailPage() {
                       src={relatedProduct.images[0]}
                       alt={relatedProduct.name}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      loading="lazy"
                     />
                   </div>
 
@@ -402,7 +414,7 @@ export function ProductDetailPage() {
                       </span>
 
                       {relatedProduct.featured && (
-                        <span className="text-xs !bg-[#F3C64B] !text-[#5C3A21] px-2 py-1 rounded-full font-bold shadow-md">
+                        <span className="text-xs bg-[#F3C64B] text-[#5C3A21] px-2 py-1 rounded-full font-bold shadow-md">
                           Destacado
                         </span>
                       )}

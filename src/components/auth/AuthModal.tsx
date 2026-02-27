@@ -12,6 +12,7 @@ interface AuthModalProps {
 export function AuthModal({ isOpen, onClose, initialMode = 'login' }: AuthModalProps) {
   const [mode, setMode] = useState<'login' | 'register'>(initialMode);
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -69,13 +70,13 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login' }: AuthModalP
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-hidden">
+    <div className="fixed inset-0 z-50 overflow-hidden" role="dialog" aria-modal="true" aria-label={mode === 'login' ? 'Iniciar sesión' : 'Crear cuenta'}>
       {/* Backdrop */}
-      <div 
+      <div
         className="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm transition-opacity"
         onClick={onClose}
       />
-      
+
       {/* Modal */}
       <div className="fixed inset-0 flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md transform transition-all max-h-[90vh] overflow-y-auto">
@@ -94,15 +95,17 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login' }: AuthModalP
           
           {/* Content */}
           <div className="p-6">
-            {/* Demo Credentials */}
-            <div className="mb-6 p-4 bg-[#FBFAF7] rounded-lg border border-[#0B8A5F]/20">
-              <h3 className="font-medium text-[#5C3A21] mb-2">Credenciales de prueba:</h3>
-              <div className="text-sm text-gray-600 space-y-1">
-                <p><strong>Cliente:</strong> maria@example.com</p>
-                <p><strong>Admin:</strong> admin@henrysnacks.pe</p>
-                <p><strong>Contraseña:</strong> cualquier texto (mín. 6 caracteres)</p>
+            {/* Demo Credentials - solo en desarrollo */}
+            {import.meta.env.DEV && (
+              <div className="mb-6 p-4 bg-[#FBFAF7] rounded-lg border border-[#0B8A5F]/20">
+                <h3 className="font-medium text-[#5C3A21] mb-2">Credenciales de prueba:</h3>
+                <div className="text-sm text-gray-600 space-y-1">
+                  <p><strong>Cliente:</strong> maria@example.com</p>
+                  <p><strong>Admin:</strong> admin@henrysnacks.pe</p>
+                  <p><strong>Contraseña:</strong> cualquier texto (mín. 6 caracteres)</p>
+                </div>
               </div>
-            </div>
+            )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
               {mode === 'register' && (
@@ -197,15 +200,23 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login' }: AuthModalP
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                     <input
-                      type={showPassword ? 'text' : 'password'}
+                      type={showConfirmPassword ? 'text' : 'password'}
                       name="confirmPassword"
                       value={formData.confirmPassword}
                       onChange={handleInputChange}
-                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0B8A5F] focus:border-transparent outline-none"
+                      className="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0B8A5F] focus:border-transparent outline-none"
                       placeholder="Confirma tu contraseña"
                       minLength={6}
                       required
                     />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      aria-label={showConfirmPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                    >
+                      {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    </button>
                   </div>
                   {formData.password && formData.confirmPassword && formData.password !== formData.confirmPassword && (
                     <p className="text-red-500 text-sm mt-1">Las contraseñas no coinciden</p>

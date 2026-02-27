@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { X, Plus, Minus, ShoppingBag, Package } from 'lucide-react';
+import { X, Plus, Minus, ShoppingBag, Package, MessageCircle } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { formatPrice } from '../../lib/utils';
 import { useCart } from '../../contexts/CartContext';
@@ -14,14 +14,19 @@ export function CartDrawer() {
   useEffect(() => {
     if (state.isOpen) {
       setIsAnimating(true);
+      document.body.style.overflow = 'hidden';
     }
+    return () => {
+      document.body.style.overflow = '';
+    };
   }, [state.isOpen]);
 
   const handleClose = () => {
     setIsAnimating(false);
+    document.body.style.overflow = '';
     setTimeout(() => {
       closeCart();
-    }, 300); // Duración de la animación
+    }, 300);
   };
 
   const getProductName = (productId: string) => {
@@ -29,13 +34,40 @@ export function CartDrawer() {
     return product?.name || 'Producto';
   };
 
+  const buildWhatsAppMessage = () => {
+    const lines = ['Hola! Quiero hacer un pedido:'];
+    lines.push('');
+    state.items.forEach(item => {
+      if (item.type === 'product') {
+        const options = Object.entries(item.selectedOptions)
+          .map(([optionId, choiceId]) => {
+            const option = item.product.options.find(opt => opt.id === optionId);
+            const choice = option?.options.find(ch => ch.id === choiceId);
+            return choice?.name;
+          })
+          .filter(Boolean)
+          .join(', ');
+        lines.push(`- ${item.quantity}x ${item.product.name}${options ? ` (${options})` : ''} - ${formatPrice(item.totalPrice * item.quantity)}`);
+      } else {
+        lines.push(`- ${item.quantity}x ${item.combo.name} (Combo) - ${formatPrice(item.totalPrice * item.quantity)}`);
+      }
+    });
+    const df = state.items.length > 0 ? 5 : 0;
+    lines.push('');
+    lines.push(`Subtotal: ${formatPrice(state.total)}`);
+    lines.push(`Delivery: ${formatPrice(df)}`);
+    lines.push(`Total: ${formatPrice(state.total + df)}`);
+    return encodeURIComponent(lines.join('\n'));
+  };
+
   if (!state.isOpen) return null;
 
   const deliveryFee = state.items.length > 0 ? 5 : 0;
   const total = state.total + deliveryFee;
+  const totalItems = state.items.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
-    <div className="fixed inset-0 z-50 overflow-hidden">
+    <div className="fixed inset-0 z-50 overflow-hidden" role="dialog" aria-modal="true" aria-label="Carrito de compras">
       {/* Backdrop */}
       <div
         className={`absolute inset-0 bg-black backdrop-blur-sm transition-all duration-300 ${
@@ -54,10 +86,16 @@ export function CartDrawer() {
             <h2 className="text-xl font-bold text-[#5C3A21] flex items-center">
               <ShoppingBag className="w-5 h-5 mr-2" />
               Tu Carrito
+              {totalItems > 0 && (
+                <span className="ml-2 text-sm font-normal text-gray-500">
+                  ({totalItems} {totalItems === 1 ? 'item' : 'items'})
+                </span>
+              )}
             </h2>
             <button
               onClick={handleClose}
               className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              aria-label="Cerrar carrito"
             >
               <X className="w-5 h-5" />
             </button>
@@ -121,6 +159,7 @@ export function CartDrawer() {
                                 <button
                                   onClick={() => updateQuantity('product', item.product.id, item.quantity - 1, item.selectedOptions)}
                                   className="w-8 h-8 rounded-full bg-white border flex items-center justify-center hover:bg-gray-50"
+                                  aria-label="Disminuir cantidad"
                                 >
                                   <Minus className="w-3 h-3" />
                                 </button>
@@ -130,6 +169,7 @@ export function CartDrawer() {
                                 <button
                                   onClick={() => updateQuantity('product', item.product.id, item.quantity + 1, item.selectedOptions)}
                                   className="w-8 h-8 rounded-full bg-white border flex items-center justify-center hover:bg-gray-50"
+                                  aria-label="Aumentar cantidad"
                                 >
                                   <Plus className="w-3 h-3" />
                                 </button>
@@ -162,8 +202,8 @@ export function CartDrawer() {
                               alt={item.combo.name}
                               className="w-16 h-16 rounded-lg object-cover"
                             />
-                            <div className="absolute -top-1 -right-1 !bg-[#F3C64B] rounded-full p-1 shadow-md">
-                              <Package className="w-3 h-3 !text-[#5C3A21]" />
+                            <div className="absolute -top-1 -right-1 bg-[#F3C64B] rounded-full p-1 shadow-md">
+                              <Package className="w-3 h-3 text-[#5C3A21]" />
                             </div>
                           </div>
 
@@ -172,7 +212,7 @@ export function CartDrawer() {
                               <h3 className="font-medium text-[#5C3A21] text-sm">
                                 {item.combo.name}
                               </h3>
-                              <span className="text-xs !bg-[#F3C64B] !text-[#5C3A21] px-2 py-0.5 rounded-full font-bold shadow-sm">
+                              <span className="text-xs bg-[#F3C64B] text-[#5C3A21] px-2 py-0.5 rounded-full font-bold shadow-sm">
                                 -{item.combo.discount_percentage}%
                               </span>
                             </div>
@@ -192,6 +232,7 @@ export function CartDrawer() {
                                 <button
                                   onClick={() => updateQuantity('combo', item.combo.id, item.quantity - 1)}
                                   className="w-8 h-8 rounded-full bg-white border border-[#F3C64B] flex items-center justify-center hover:bg-[#F3C64B]/10"
+                                  aria-label="Disminuir cantidad"
                                 >
                                   <Minus className="w-3 h-3" />
                                 </button>
@@ -201,6 +242,7 @@ export function CartDrawer() {
                                 <button
                                   onClick={() => updateQuantity('combo', item.combo.id, item.quantity + 1)}
                                   className="w-8 h-8 rounded-full bg-white border border-[#F3C64B] flex items-center justify-center hover:bg-[#F3C64B]/10"
+                                  aria-label="Aumentar cantidad"
                                 >
                                   <Plus className="w-3 h-3" />
                                 </button>
@@ -244,9 +286,16 @@ export function CartDrawer() {
                 </div>
                 
                 <div className="flex flex-col gap-3">
-                  <Button size="lg" className="w-full">
-                    Proceder al Checkout
-                  </Button>
+                  <a
+                    href={`https://wa.me/51987654321?text=${buildWhatsAppMessage()}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Button size="lg" className="w-full bg-[#25D366] hover:bg-[#20bd5a] shadow-lg shadow-[#25D366]/25">
+                      <MessageCircle className="w-5 h-5 mr-2" />
+                      Pedir por WhatsApp
+                    </Button>
+                  </a>
 
                   <Button
                     variant="outline"

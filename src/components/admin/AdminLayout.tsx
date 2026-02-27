@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  LayoutDashboard,
   ShoppingBag,
   Package,
   Users,
@@ -9,7 +8,8 @@ import {
   Settings,
   LogOut,
   Menu,
-  X
+  X,
+  Boxes
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -21,7 +21,7 @@ interface AdminLayoutProps {
 const menuItems = [
   { id: 'orders', label: 'Pedidos', icon: ShoppingBag, path: '/admin/orders' },
   { id: 'products', label: 'Productos', icon: Package, path: '/admin/products' },
-  { id: 'combos', label: 'Combos', icon: LayoutDashboard, path: '/admin/combos' },
+  { id: 'combos', label: 'Combos', icon: Boxes, path: '/admin/combos' },
   { id: 'users', label: 'Usuarios', icon: Users, path: '/admin/users' },
   { id: 'reports', label: 'Reportes', icon: BarChart3, path: '/admin/reports' },
   { id: 'settings', label: 'Configuración', icon: Settings, path: '/admin/settings' },
@@ -98,7 +98,7 @@ export function AdminLayout({ children, currentPage }: AdminLayoutProps) {
             <button
               onClick={logout}
               className="ml-2 p-2 text-gray-400 hover:text-red-600 transition-colors"
-              title="Cerrar sesión"
+              aria-label="Cerrar sesión"
             >
               <LogOut className="w-5 h-5" />
             </button>
@@ -122,12 +122,12 @@ export function AdminLayout({ children, currentPage }: AdminLayoutProps) {
           </h2>
 
           <div className="flex items-center space-x-4">
-            <a
-              href="/"
+            <Link
+              to="/"
               className="text-sm text-gray-600 hover:text-[#0B8A5F] transition-colors"
             >
               Ver sitio web
-            </a>
+            </Link>
           </div>
         </header>
 

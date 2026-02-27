@@ -35,7 +35,7 @@ function ComboCard({ combo, onAddToCart, regularPrice, discountedPrice }: ComboC
 
         {/* Combo Badge */}
         <div className="absolute top-3 left-3">
-          <span className="!bg-[#F3C64B] !text-[#5C3A21] px-3 py-1 rounded-full text-sm font-bold flex items-center shadow-lg">
+          <span className="bg-[#F3C64B] text-[#5C3A21] px-3 py-1 rounded-full text-sm font-bold flex items-center shadow-lg">
             <Package className="w-4 h-4 mr-1 fill-current" />
             COMBO
           </span>
@@ -43,7 +43,7 @@ function ComboCard({ combo, onAddToCart, regularPrice, discountedPrice }: ComboC
 
         {/* Discount Badge */}
         <div className="absolute top-3 right-3">
-          <span className="!bg-red-600 !text-white px-3 py-1 rounded-full text-sm font-bold flex items-center shadow-lg">
+          <span className="bg-red-600 text-white px-3 py-1 rounded-full text-sm font-bold flex items-center shadow-lg">
             <Tag className="w-4 h-4 mr-1 fill-current" />
             -{combo.discount_percentage}%
           </span>

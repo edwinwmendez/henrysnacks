@@ -49,7 +49,10 @@ export function Header() {
           
           {/* Navigation - Hidden on mobile */}
           <nav className="hidden md:flex items-center space-x-8">
-            <Link to="/" className="text-[#5C3A21] hover:text-[#0B8A5F] transition-colors">
+            <Link
+              to="/"
+              className={`transition-colors ${location.pathname === '/' ? 'text-[#0B8A5F] font-semibold' : 'text-[#5C3A21] hover:text-[#0B8A5F]'}`}
+            >
               Inicio
             </Link>
             <button
@@ -71,7 +74,11 @@ export function Header() {
             {/* Special CTA */}
             <Link
               to="/tienda"
-              className="px-4 py-2 border-2 border-[#0B8A5F] text-[#0B8A5F] rounded-lg hover:bg-[#0B8A5F] hover:text-white transition-all font-medium"
+              className={`px-4 py-2 border-2 rounded-lg transition-all font-medium ${
+                location.pathname === '/tienda'
+                  ? 'bg-[#0B8A5F] text-white border-[#0B8A5F]'
+                  : 'border-[#0B8A5F] text-[#0B8A5F] hover:bg-[#0B8A5F] hover:text-white'
+              }`}
             >
               Tienda
             </Link>
@@ -120,8 +127,9 @@ export function Header() {
         </div>
 
         {/* Mobile Menu */}
-        {mobileMenuOpen && (
-          <div className="md:hidden border-t border-gray-200 bg-white">
+        <div className={`md:hidden border-t border-gray-200 bg-white overflow-hidden transition-all duration-300 ease-in-out ${
+          mobileMenuOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
+        }`}>
             <nav className="container mx-auto px-4 py-4 space-y-2">
               <Link
                 to="/"
@@ -176,7 +184,7 @@ export function Header() {
                     <p className="font-bold text-[#5C3A21]">{authState.user?.name}</p>
                     <p className="text-xs text-gray-600">{authState.user?.email}</p>
                     {authState.user?.role === 'admin' && (
-                      <span className="inline-block mt-1 px-2 py-0.5 !bg-[#F3C64B] !text-[#5C3A21] text-xs rounded-full font-bold shadow-sm">
+                      <span className="inline-block mt-1 px-2 py-0.5 bg-[#F3C64B] text-[#5C3A21] text-xs rounded-full font-bold shadow-sm">
                         Administrador
                       </span>
                     )}
@@ -209,7 +217,6 @@ export function Header() {
               )}
             </nav>
           </div>
-        )}
       </div>
       </header>
 

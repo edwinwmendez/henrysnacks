@@ -1,1 +1,23 @@
 @import "tailwindcss";
+
+@theme {
+  --color-brand-green: #0B8A5F;
+  --color-brand-green-dark: #0A7A55;
+  --color-brand-brown: #5C3A21;
+  --color-brand-brown-dark: #3d2616;
+  --color-brand-orange: #F48C42;
+  --color-brand-orange-dark: #E67E3C;
+  --color-brand-gold: #F3C64B;
+  --color-brand-cream: #FBFAF7;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

@@ -3,6 +3,7 @@ import { AdminLayout } from '../../components/admin/AdminLayout';
 import { Save, Plus, Trash2, Settings as SettingsIcon } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { Button } from '../../components/ui/Button';
+import { useToast } from '../../contexts/ToastContext';
 
 interface SiteConfig {
   id: string;
@@ -19,6 +20,7 @@ interface District {
 }
 
 export function SettingsPage() {
+  const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [siteName, setSiteName] = useState('Henry Snacks');
@@ -134,10 +136,10 @@ export function SettingsPage() {
         }
       }
 
-      alert('Configuración guardada exitosamente');
+      toast('Configuración guardada exitosamente');
     } catch (error) {
       console.error('Error saving settings:', error);
-      alert('Error al guardar la configuración');
+      toast('Error al guardar la configuración', 'error');
     } finally {
       setSaving(false);
     }

@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Header } from '../components/layout/Header';
 import { Footer } from '../components/layout/Footer';
@@ -30,7 +30,15 @@ export function StorePage() {
   const { addToCart, addComboToCart } = useCart();
   const { products } = useProducts();
   const { combos } = useCombos();
+  const [searchInput, setSearchInput] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => setSearchTerm(searchInput), 300);
+    return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
+  }, [searchInput]);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [showFilters, setShowFilters] = useState(false);
   const [sortBy, setSortBy] = useState<SortOption>('featured');
@@ -213,13 +221,13 @@ export function StorePage() {
               <input
                 type="text"
                 placeholder="Buscar productos, combos..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
                 className="w-full pl-12 pr-12 py-4 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#0B8A5F] focus:border-transparent outline-none shadow-sm"
               />
-              {searchTerm && (
+              {searchInput && (
                 <button
-                  onClick={() => setSearchTerm('')}
+                  onClick={() => { setSearchInput(''); setSearchTerm(''); }}
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 >
                   <X className="w-5 h-5" />
@@ -305,7 +313,7 @@ export function StorePage() {
                         onClick={() => toggleTag(tag)}
                         className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
                           selectedTags.includes(tag)
-                            ? '!bg-[#0B8A5F] !text-white shadow-md'
+                            ? 'bg-[#0B8A5F] text-white shadow-md'
                             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                         }`}
                       >
@@ -372,6 +380,7 @@ export function StorePage() {
                   </p>
                   <Button
                     onClick={() => {
+                      setSearchInput('');
                       setSearchTerm('');
                       setSelectedCategory('all');
                       setSelectedTags([]);
@@ -400,31 +409,32 @@ export function StorePage() {
                             src={item.images[0]}
                             alt={item.name}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            loading="lazy"
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
 
                           {/* Badges */}
                           <div className="absolute top-2.5 left-2.5 flex flex-col gap-1.5">
                             {item.featured && (
-                              <span className="!bg-[#F3C64B] !text-[#5C3A21] px-2.5 py-1 rounded-lg text-xs font-bold flex items-center w-fit shadow-lg">
+                              <span className="bg-[#F3C64B] text-[#5C3A21] px-2.5 py-1 rounded-lg text-xs font-bold flex items-center w-fit shadow-lg">
                                 <Star className="w-3 h-3 mr-1 fill-current" />
                                 Destacado
                               </span>
                             )}
                             {isCombo && (
-                              <span className="!bg-[#0B8A5F] !text-white px-2.5 py-1 rounded-lg text-xs font-bold flex items-center w-fit shadow-lg">
+                              <span className="bg-[#0B8A5F] text-white px-2.5 py-1 rounded-lg text-xs font-bold flex items-center w-fit shadow-lg">
                                 <Package className="w-3 h-3 mr-1 fill-current" />
                                 COMBO
                               </span>
                             )}
                             {item.tags.includes('nuevo') && (
-                              <span className="!bg-gradient-to-r !from-purple-600 !to-pink-600 !text-white px-2.5 py-1 rounded-lg text-xs font-bold flex items-center w-fit shadow-lg">
+                              <span className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-2.5 py-1 rounded-lg text-xs font-bold flex items-center w-fit shadow-lg">
                                 <Sparkles className="w-3 h-3 mr-1 fill-current" />
                                 NUEVO
                               </span>
                             )}
                             {item.tags.includes('popular') && (
-                              <span className="!bg-gradient-to-r !from-orange-500 !to-red-500 !text-white px-2.5 py-1 rounded-lg text-xs font-bold flex items-center w-fit shadow-lg">
+                              <span className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-2.5 py-1 rounded-lg text-xs font-bold flex items-center w-fit shadow-lg">
                                 <Flame className="w-3 h-3 mr-1 fill-current" />
                                 Popular
                               </span>
@@ -434,7 +444,7 @@ export function StorePage() {
                           {/* Discount Badge for Combos */}
                           {isCombo && (
                             <div className="absolute top-2.5 right-2.5">
-                              <span className="!bg-red-600 !text-white px-2.5 py-1 rounded-lg text-xs font-bold flex items-center shadow-lg">
+                              <span className="bg-red-600 text-white px-2.5 py-1 rounded-lg text-xs font-bold flex items-center shadow-lg">
                                 <Tag className="w-3 h-3 mr-1 fill-current" />
                                 -{(item as Combo).discount_percentage}%
                               </span>
@@ -448,7 +458,7 @@ export function StorePage() {
                                 e.preventDefault();
                                 isCombo ? handleAddCombo(item as Combo) : handleAddProduct(item as Product);
                               }}
-                              className="!bg-white !text-[#0B8A5F] hover:!bg-gray-100 shadow-xl"
+                              className="bg-white text-[#0B8A5F] hover:bg-gray-100 shadow-xl"
                             >
                               <Plus className="w-4 h-4 mr-2" />
                               Agregar al Carrito
@@ -527,7 +537,7 @@ export function StorePage() {
                             <Button
                               size="sm"
                               onClick={() => isCombo ? handleAddCombo(item as Combo) : handleAddProduct(item as Product)}
-                              className="!bg-[#0B8A5F] hover:!bg-[#0B8A5F]/90 !text-white sm:hidden"
+                              className="bg-[#0B8A5F] hover:bg-[#0B8A5F]/90 text-white sm:hidden"
                             >
                               <Plus className="w-4 h-4" />
                             </Button>
