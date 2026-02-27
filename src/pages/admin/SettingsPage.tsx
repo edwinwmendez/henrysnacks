@@ -3,6 +3,7 @@ import { AdminLayout } from '../../components/admin/AdminLayout';
 import { Save, Plus, Trash2, Settings as SettingsIcon } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { Button } from '../../components/ui/Button';
+import { Spinner } from '../../components/ui/Spinner';
 import { useToast } from '../../contexts/ToastContext';
 
 interface SiteConfig {
@@ -162,7 +163,10 @@ export function SettingsPage() {
   if (loading) {
     return (
       <AdminLayout currentPage="settings">
-        <div className="p-8 text-center text-gray-500">Cargando configuración...</div>
+        <div className="p-8 flex flex-col items-center gap-3 text-gray-500">
+          <Spinner />
+          <span>Cargando configuración...</span>
+        </div>
       </AdminLayout>
     );
   }

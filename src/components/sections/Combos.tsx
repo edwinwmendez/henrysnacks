@@ -4,6 +4,7 @@ import { formatPrice } from '../../lib/utils';
 import { useProducts } from '../../hooks/useProducts';
 import { useCombos } from '../../hooks/useCombos';
 import { useCart } from '../../contexts/CartContext';
+import { ErrorAlert } from '../ui/ErrorAlert';
 import { Combo } from '../../types';
 
 interface ComboCardProps {
@@ -30,6 +31,9 @@ function ComboCard({ combo, onAddToCart, regularPrice, discountedPrice }: ComboC
           src={combo.images[0]}
           alt={combo.name}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+          loading="lazy"
+          width={600}
+          height={338}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
 
@@ -124,7 +128,7 @@ function ComboCard({ combo, onAddToCart, regularPrice, discountedPrice }: ComboC
 
 export function Combos() {
   const { addComboToCart } = useCart();
-  const { combos } = useCombos();
+  const { combos, error: combosError, refresh: refreshCombos } = useCombos();
   const { products } = useProducts();
 
   const calculateComboPrice = (combo: Combo) => {
@@ -160,6 +164,12 @@ export function Combos() {
             Ahorra más disfrutando de lo mejor de la Amazonía en un solo pedido.
           </p>
         </div>
+
+        {combosError && (
+          <div className="mb-12 max-w-md mx-auto">
+            <ErrorAlert message="Error al cargar los combos" onRetry={refreshCombos} />
+          </div>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {combos.filter(c => c.available).map(combo => {

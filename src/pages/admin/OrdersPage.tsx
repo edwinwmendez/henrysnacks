@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { Search, Filter, Eye, CheckCircle, Clock, Truck, XCircle } from 'lucide-react';
+import { Spinner } from '../../components/ui/Spinner';
 import { supabase } from '../../lib/supabase';
 import { Order } from '../../types';
 import { formatPrice } from '../../lib/utils';
@@ -155,7 +156,10 @@ export function OrdersPage() {
         {/* Orders list */}
         <div className="bg-white rounded-lg shadow overflow-hidden">
           {loading ? (
-            <div className="p-8 text-center text-gray-500">Cargando pedidos...</div>
+            <div className="p-8 flex flex-col items-center gap-3 text-gray-500">
+              <Spinner />
+              <span>Cargando pedidos...</span>
+            </div>
           ) : filteredOrders.length === 0 ? (
             <div className="p-8 text-center text-gray-500">No se encontraron pedidos</div>
           ) : (

@@ -19,6 +19,7 @@ import {
   Package,
   Tag
 } from 'lucide-react';
+import { Spinner } from '../components/ui/Spinner';
 
 export function ComboDetailPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -96,7 +97,7 @@ export function ComboDetailPage() {
         <Header />
         <div className="min-h-screen bg-[#FBFAF7] flex items-center justify-center">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#0B8A5F] mx-auto mb-4"></div>
+            <Spinner size="lg" className="mx-auto mb-4" />
             <p className="text-gray-600">Cargando combo...</p>
           </div>
         </div>
@@ -251,6 +252,7 @@ export function ComboDetailPage() {
                     <button
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
                       className="w-10 h-10 rounded-lg bg-white flex items-center justify-center hover:bg-gray-50 transition-colors"
+                      aria-label="Disminuir cantidad"
                     >
                       <Minus className="w-4 h-4" />
                     </button>
@@ -260,6 +262,7 @@ export function ComboDetailPage() {
                     <button
                       onClick={() => setQuantity(quantity + 1)}
                       className="w-10 h-10 rounded-lg bg-white flex items-center justify-center hover:bg-gray-50 transition-colors"
+                      aria-label="Aumentar cantidad"
                     >
                       <Plus className="w-4 h-4" />
                     </button>
@@ -321,6 +324,9 @@ export function ComboDetailPage() {
                           src={relatedCombo.images[0]}
                           alt={relatedCombo.name}
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                          loading="lazy"
+                          width={400}
+                          height={400}
                         />
                         {relatedCombo.featured && (
                           <div className="absolute top-3 left-3">

@@ -4,6 +4,7 @@ import { Button } from '../ui/Button';
 import { formatPrice } from '../../lib/utils';
 import { useProducts } from '../../hooks/useProducts';
 import { useCart } from '../../contexts/CartContext';
+import { ErrorAlert } from '../ui/ErrorAlert';
 import { Product } from '../../types';
 
 interface ProductCardProps {
@@ -103,7 +104,7 @@ function ProductCard({ product, onAddToCart }: ProductCardProps) {
 
 export function FeaturedProducts() {
   const { addToCart } = useCart();
-  const { getFeaturedProducts } = useProducts();
+  const { getFeaturedProducts, error, refresh } = useProducts();
   const featuredProducts = getFeaturedProducts();
   
   const handleAddToCart = (product: Product) => {
@@ -140,6 +141,13 @@ export function FeaturedProducts() {
           </p>
         </div>
         
+        {/* Error State */}
+        {error && (
+          <div className="mb-12 max-w-md mx-auto">
+            <ErrorAlert message="Error al cargar los productos" onRetry={refresh} />
+          </div>
+        )}
+
         {/* Products Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
           {featuredProducts.map(product => (

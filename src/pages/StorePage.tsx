@@ -4,6 +4,7 @@ import { Header } from '../components/layout/Header';
 import { Footer } from '../components/layout/Footer';
 import { CartDrawer } from '../components/cart/CartDrawer';
 import { Button } from '../components/ui/Button';
+import { ErrorAlert } from '../components/ui/ErrorAlert';
 import { Search, X, Package, Star, Plus, Tag, ChevronRight, Filter, Grid3x3, Flame, Sparkles, TrendingUp } from 'lucide-react';
 import { formatPrice } from '../lib/utils';
 import { useCart } from '../contexts/CartContext';
@@ -28,8 +29,9 @@ type SortOption = 'featured' | 'price-asc' | 'price-desc' | 'name';
 
 export function StorePage() {
   const { addToCart, addComboToCart } = useCart();
-  const { products } = useProducts();
-  const { combos } = useCombos();
+  const { products, error: productsError, refresh: refreshProducts } = useProducts();
+  const { combos, error: combosError, refresh: refreshCombos } = useCombos();
+  const hasError = productsError || combosError;
   const [searchInput, setSearchInput] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -285,20 +287,38 @@ export function StorePage() {
                 <div className="bg-white rounded-xl p-4 shadow-sm">
                   <h3 className="font-bold text-[#5C3A21] mb-3">Precio</h3>
                   <div className="space-y-3">
-                    <div className="flex items-center justify-between text-sm text-gray-600">
-                      <span>{formatPrice(priceRange[0])}</span>
-                      <span>{formatPrice(priceRange[1])}</span>
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <label className="text-xs text-gray-500">Mínimo</label>
+                        <span className="text-xs font-medium text-[#0B8A5F]">{formatPrice(priceRange[0])}</span>
+                      </div>
+                      <input
+                        type="range"
+                        min={minPrice}
+                        max={maxPrice}
+                        value={priceRange[0]}
+                        onChange={(e) => setPriceRange([Math.min(parseInt(e.target.value), priceRange[1]), priceRange[1]])}
+                        className="w-full accent-[#0B8A5F]"
+                        aria-label="Precio mínimo"
+                      />
                     </div>
-                    <input
-                      type="range"
-                      min={minPrice}
-                      max={maxPrice}
-                      value={priceRange[1]}
-                      onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
-                      className="w-full accent-[#0B8A5F]"
-                    />
-                    <div className="text-xs text-gray-500">
-                      Rango: {formatPrice(minPrice)} - {formatPrice(maxPrice)}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <label className="text-xs text-gray-500">Máximo</label>
+                        <span className="text-xs font-medium text-[#0B8A5F]">{formatPrice(priceRange[1])}</span>
+                      </div>
+                      <input
+                        type="range"
+                        min={minPrice}
+                        max={maxPrice}
+                        value={priceRange[1]}
+                        onChange={(e) => setPriceRange([priceRange[0], Math.max(parseInt(e.target.value), priceRange[0])])}
+                        className="w-full accent-[#0B8A5F]"
+                        aria-label="Precio máximo"
+                      />
+                    </div>
+                    <div className="text-xs text-gray-500 text-center">
+                      {formatPrice(priceRange[0])} - {formatPrice(priceRange[1])}
                     </div>
                   </div>
                 </div>
@@ -367,6 +387,16 @@ export function StorePage() {
                   </div>
                 </div>
               </div>
+
+              {/* Error State */}
+              {hasError && (
+                <div className="mb-6">
+                  <ErrorAlert
+                    message="Error al cargar el catálogo"
+                    onRetry={() => { refreshProducts(); refreshCombos(); }}
+                  />
+                </div>
+              )}
 
               {/* Items Grid */}
               {filteredItems.length === 0 ? (

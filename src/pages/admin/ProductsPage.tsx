@@ -6,6 +6,7 @@ import { useProducts } from '../../hooks/useProducts';
 import { Product, ProductOption } from '../../types';
 import { formatPrice } from '../../lib/utils';
 import { Button } from '../../components/ui/Button';
+import { Spinner } from '../../components/ui/Spinner';
 import { useToast } from '../../contexts/ToastContext';
 
 export function ProductsPage() {
@@ -162,7 +163,10 @@ export function ProductsPage() {
         {/* Products grid */}
         <div className="bg-white rounded-lg shadow overflow-hidden">
           {loading ? (
-            <div className="p-8 text-center text-gray-500">Cargando productos...</div>
+            <div className="p-8 flex flex-col items-center gap-3 text-gray-500">
+              <Spinner />
+              <span>Cargando productos...</span>
+            </div>
           ) : filteredProducts.length === 0 ? (
             <div className="p-8 text-center text-gray-500">No se encontraron productos</div>
           ) : (
@@ -351,19 +355,60 @@ export function ProductsPage() {
 
               {/* Imágenes */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Imágenes (URLs separadas por coma)
-                </label>
-                <textarea
-                  value={editingProduct.images.join(', ')}
-                  onChange={(e) => setEditingProduct({
-                    ...editingProduct,
-                    images: e.target.value.split(',').map(url => url.trim()).filter(url => url)
-                  })}
-                  rows={2}
-                  placeholder="https://example.com/image1.jpg, https://example.com/image2.jpg"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0B8A5F] focus:border-transparent"
-                />
+                <div className="flex items-center justify-between mb-2">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Imágenes
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setEditingProduct({
+                      ...editingProduct,
+                      images: [...editingProduct.images, '']
+                    })}
+                    className="text-sm text-[#0B8A5F] hover:text-[#0B8A5F]/80"
+                  >
+                    + Agregar imagen
+                  </button>
+                </div>
+                <div className="space-y-3">
+                  {editingProduct.images.map((url, imgIndex) => (
+                    <div key={imgIndex} className="flex items-start gap-3">
+                      {url && (
+                        <img
+                          src={url}
+                          alt={`Imagen ${imgIndex + 1}`}
+                          className="w-16 h-16 rounded-lg object-cover border border-gray-200 shrink-0"
+                          onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                        />
+                      )}
+                      <input
+                        type="url"
+                        value={url}
+                        onChange={(e) => {
+                          const newImages = [...editingProduct.images];
+                          newImages[imgIndex] = e.target.value;
+                          setEditingProduct({ ...editingProduct, images: newImages });
+                        }}
+                        placeholder="https://ejemplo.com/imagen.jpg"
+                        className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0B8A5F] focus:border-transparent text-sm"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const newImages = editingProduct.images.filter((_, i) => i !== imgIndex);
+                          setEditingProduct({ ...editingProduct, images: newImages });
+                        }}
+                        className="text-red-500 hover:text-red-700 p-2 shrink-0"
+                        aria-label="Eliminar imagen"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))}
+                  {editingProduct.images.length === 0 && (
+                    <p className="text-sm text-gray-400 py-2">No hay imágenes. Agrega al menos una.</p>
+                  )}
+                </div>
               </div>
 
               {/* Tags */}

@@ -186,11 +186,26 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login' }: AuthModalP
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
                   >
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
                 </div>
               </div>
+
+              {mode === 'login' && (
+                <div className="text-right -mt-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      // TODO: Implement forgot password flow
+                    }}
+                    className="text-sm text-[#0B8A5F] hover:text-[#0A7A55] font-medium"
+                  >
+                    ¿Olvidaste tu contraseña?
+                  </button>
+                </div>
+              )}
 
               {mode === 'register' && (
                 <div>
